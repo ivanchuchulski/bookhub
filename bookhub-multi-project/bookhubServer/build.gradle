@@ -1,0 +1,50 @@
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id "org.flywaydb.flyway" version "7.4.0"
+
+}
+
+apply plugin: 'java-library'
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:2.1.2'
+    compile 'org.bookhub.api:bookhubAPI:1.0'
+}
+
+
+javafx {
+    version = "14"
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.graphics']
+
+}
+
+test {
+    useJUnitPlatform()
+}
+
+mainClassName = 'server.Server'
+
+
+flyway {
+    url = 'jdbc:mysql://localhost:3306'
+    user = 'root'
+    password = ''
+    schemas = ['bookhub']
+}
+
+
+task full(type: JavaExec) {
+    description = "get started run"
+    main = 'database.DatabaseConnector'
+    classpath = sourceSets.main.runtimeClasspath
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.system.module.type="sourceSet" type="JAVA_MODULE" version="4">
+  <component name="CheckStyle-IDEA-Module">
+    <option name="configuration">
+      <map />
+    </option>
+  </component>
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/../../../bookhubClient/build/classes/java/main" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../bookhubClient/src/main">
+      <sourceFolder url="file://$MODULE_DIR$/../../../bookhubClient/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../bookhubClient/src/main/resources" type="java-resource" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

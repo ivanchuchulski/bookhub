@@ -1,0 +1,24 @@
+api/database/DatabaseConnector.java
+ api.database.DatabaseConnector
+api/dto/Book.java
+ api.dto.Book
+ api.dto.Book$VolumeInfo
+ api.dto.Book$VolumeInfo$GoogleImages
+api/interfaces/GoogleBooksAPI.java
+ api.interfaces.GoogleBooksAPI
+api/interfaces/ServerObjectInterfaceImpl.java
+ api.interfaces.ServerObjectInterfaceImpl
+api/dto/Items.java
+ api.dto.Items
+api/interfaces/ServerObjectInterface.java
+ api.interfaces.ServerObjectInterface
+api/dto/User.java
+ api.dto.User
+api/example/Student.java
+ api.example.Student
+api/example/Printer.java
+ api.example.Printer
+api/example/PrinterImpl.java
+ api.example.PrinterImpl
+api/example/StudentImpl.java
+ api.example.StudentImpl

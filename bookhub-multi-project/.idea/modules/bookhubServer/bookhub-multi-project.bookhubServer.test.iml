@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.system.module.type="sourceSet" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <output-test url="file://$MODULE_DIR$/../../../bookhubServer/build/classes/java/test" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../bookhubServer/src/test">
+      <sourceFolder url="file://$MODULE_DIR$/../../../bookhubServer/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../bookhubServer/src/test/resources" type="java-test-resource" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="bookhub-multi-project.bookhubServer.main" />
+    <orderEntry type="library" name="Gradle: com.google.code.gson:gson:2.8.6" level="project" />
+    <orderEntry type="library" name="Gradle: org.mariadb.jdbc:mariadb-java-client:2.1.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-fxml:win:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:win:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:win:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:win:14" level="project" />
+  </component>
+  <component name="TestModuleProperties" production-module="bookhub-multi-project.bookhubServer.main" />
+</module>

@@ -114,6 +114,32 @@ public class Controller {
     @FXML
     void btnRegisterClicked(ActionEvent event) {
 
+        String username = txtUsername.getText();
+        String password = txtPassword.getText();
+
+        try {
+            boolean success = server.register(username, password);
+
+            txtUsername.setText("");
+            txtPassword.setText("");
+
+            Alert alert;
+
+            if (success) {
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setContentText("Registration successful!");
+            } else {
+                alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setContentText("Registration failed!");
+            }
+
+            alert.setHeaderText("Registration");
+            alert.showAndWait();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @FXML

@@ -1,4 +1,18 @@
+dto/BookTransfer.java
+ dto.BookTransfer
+ dto.BookTransfer$VolumeInfo
+ dto.BookTransfer$VolumeInfo$GoogleImages
+implementations/ServerObjectInterfaceImpl.java
+ implementations.ServerObjectInterfaceImpl
 server/Controller.java
  server.Controller
+google/books/GoogleBooksAPI.java
+ google.books.GoogleBooksAPI
 server/Server.java
  server.Server
+database/User.java
+ database.User
+database/DatabaseConnector.java
+ database.DatabaseConnector
+dto/Items.java
+ dto.Items

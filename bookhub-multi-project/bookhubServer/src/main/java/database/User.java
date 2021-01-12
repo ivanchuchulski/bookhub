@@ -1,4 +1,4 @@
-package api.database;
+package database;
 
 public class User {
 

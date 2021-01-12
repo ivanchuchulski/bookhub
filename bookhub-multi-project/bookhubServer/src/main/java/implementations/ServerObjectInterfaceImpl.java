@@ -1,7 +1,10 @@
-package api.interfaces;
+package implementations;
 
-import api.dto.BookTransfer;
-import api.dto.Items;
+import dto.BookTransfer;
+import dto.Items;
+import api.interfaces.BookImpl;
+import google.books.GoogleBooksAPI;
+import api.interfaces.ServerObjectInterface;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -11,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 
 public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements ServerObjectInterface {
 
-    private GoogleBooksAPI googleBooksAPI = new GoogleBooksAPI();
+    private final GoogleBooksAPI googleBooksAPI = new GoogleBooksAPI();
 
     public ServerObjectInterfaceImpl() throws RemoteException {
         super();
@@ -31,16 +34,19 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
             for (BookTransfer item : booksByTitle.getItems()) {
                 BookTransfer.VolumeInfo volumeInfo = item.getVolumeInfo();
 
+                String notFoundImage = "https://drudesk.com/sites/default/files/styles/blog_page_header_1088x520" +
+                        "/public/2018-02/404-error-page-not-found.jpg?itok=YW-iShwf";
+
+                String imageLink = volumeInfo.getImageLinks() == null ?
+                        notFoundImage : volumeInfo.getImageLinks().getSmallThumbnail();
+
                 result.add(new BookImpl(volumeInfo.getTitle(), volumeInfo.getAuthors(), volumeInfo.getPublisher(),
                                         volumeInfo.getPublishedDate(), volumeInfo.getDescription(),
-                                        volumeInfo.getImageLinks().getSmallThumbnail()));
-
+                                        imageLink));
             }
             return result;
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 

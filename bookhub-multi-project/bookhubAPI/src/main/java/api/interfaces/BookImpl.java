@@ -1,10 +1,9 @@
 package api.interfaces;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
 
+// this object is used for sending to the client
 public class BookImpl implements Serializable {
     private final String title;
     private final String[] authors;

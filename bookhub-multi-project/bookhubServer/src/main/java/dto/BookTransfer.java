@@ -1,9 +1,10 @@
-package api.dto;
+package dto;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
 
+// this object is used for receiving response from Google books
 public class BookTransfer implements Serializable {
     private final VolumeInfo volumeInfo;
 

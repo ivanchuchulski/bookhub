@@ -1,4 +1,4 @@
-package api.database;
+package database;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;

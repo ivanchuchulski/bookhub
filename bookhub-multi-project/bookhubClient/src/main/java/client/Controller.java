@@ -1,7 +1,5 @@
 package client;
 
-import api.example.Printer;
-import api.example.Student;
 import api.interfaces.BookImpl;
 import api.interfaces.ServerObjectInterface;
 import javafx.application.Platform;
@@ -158,9 +156,6 @@ public class Controller {
         try {
             registry = LocateRegistry.getRegistry(7777);
             server = (ServerObjectInterface) registry.lookup("interface");
-            Student student = (Student) registry.lookup("student");
-            Printer printer = (Printer) registry.lookup("printer");
-            printer.print(student);
 
         } catch (AccessException e) {
             e.printStackTrace();

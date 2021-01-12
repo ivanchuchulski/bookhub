@@ -1,26 +1,4 @@
-api/example/Printer.java
- api.example.Printer
-api/example/Student.java
- api.example.Student
-api/example/PrinterImpl.java
- api.example.PrinterImpl
-api/example/StudentImpl.java
- api.example.StudentImpl
-api/database/DatabaseConnector.java
- api.database.DatabaseConnector
-api/interfaces/GoogleBooksAPI.java
- api.interfaces.GoogleBooksAPI
-api/dto/BookTransfer.java
- api.dto.BookTransfer
- api.dto.BookTransfer$VolumeInfo
- api.dto.BookTransfer$VolumeInfo$GoogleImages
-api/dto/Items.java
- api.dto.Items
-api/database/User.java
- api.database.User
-api/interfaces/ServerObjectInterface.java
- api.interfaces.ServerObjectInterface
-api/interfaces/ServerObjectInterfaceImpl.java
- api.interfaces.ServerObjectInterfaceImpl
 api/interfaces/BookImpl.java
  api.interfaces.BookImpl
+api/interfaces/ServerObjectInterface.java
+ api.interfaces.ServerObjectInterface

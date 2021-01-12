@@ -7,16 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -36,7 +27,7 @@ public class Controller {
     private ObservableList<BookImpl> searchResults;
 
     @FXML
-    private TabPane tpaneMenu;
+    private TabPane tabPaneMenu;
 
     @FXML
     private Tab tabLogin;
@@ -69,22 +60,25 @@ public class Controller {
     private Label lblOperationsUsername;
 
     @FXML
-    private TextField textFieldInput;
+    private TextField textSearch;
 
     @FXML
     private Button btnQuit;
 
     @FXML
-    private Label lblDercypt1;
+    private ComboBox<?> cmbCategory;
 
     @FXML
-    private ListView<BookImpl> listViewSearchPanel;
+    private Label lblCategory;
 
     @FXML
     private Button btnAdd;
 
     @FXML
-    private Label lblDercypt11;
+    private Label lblSearch;
+
+    @FXML
+    private ComboBox<?> cmbAction;
 
     @FXML
     private Button btnSearch;
@@ -93,11 +87,19 @@ public class Controller {
     private TextArea txaSearchPanel;
 
     @FXML
+    private ImageView imageViewSearchPane;
+
+    @FXML
     private ScrollPane scrPaneMyBooks;
 
     @FXML
-    private ImageView imageViewSearchPane;
+    private ListView<BookImpl> listViewSearchPanel;
 
+
+    @FXML
+    void btnAddBook(ActionEvent event) {
+
+    }
 
     @FXML
     void btnLoginClicked(ActionEvent event) {
@@ -116,7 +118,7 @@ public class Controller {
 
     @FXML
     void btnSearchClicked(ActionEvent event) {
-        String title = textFieldInput.getText();
+        String title = textSearch.getText();
 
         try {
             List<BookImpl> booksList = server.getBookByTitle(title);

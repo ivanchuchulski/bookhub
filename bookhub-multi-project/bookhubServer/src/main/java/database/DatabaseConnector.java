@@ -16,6 +16,34 @@ public class DatabaseConnector {
         DatabaseConnector connector = new DatabaseConnector();
     }
 
+
+    public boolean loginUserInDB(String username, String password) {
+
+        try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
+
+            String checkUserRegisteredQuery = "SELECT * FROM users WHERE username = ? AND password = ?";
+
+            PreparedStatement prep = connection.prepareStatement(checkUserRegisteredQuery);
+            prep.setString(1, username);
+            prep.setString(2, password);
+
+            ResultSet result = prep.executeQuery();
+
+            if (result.next()) {
+                result.close();
+                prep.close();
+                return true;
+            }
+
+            return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+
+    }
+
     public boolean registerUserInDB(String username, String password) {
 
         try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {

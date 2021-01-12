@@ -29,8 +29,8 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
     }
 
     @Override
-    public boolean loginUser(String username, String password) throws RemoteException {
-        return true;
+    public boolean login(String username, String password) throws RemoteException {
+        return databaseConnector.loginUserInDB(username, password);
     }
 
     @Override

@@ -101,8 +101,38 @@ public class Controller {
 
     }
 
+    private void showAlertMessage(Alert.AlertType type, String header, String context) {
+
+        Alert alert = new Alert(type);
+        alert.setHeaderText(header);
+        alert.setContentText(context);
+
+        alert.showAndWait();
+    }
+
+
     @FXML
     void btnLoginClicked(ActionEvent event) {
+
+        String username = txtUsername.getText();
+        String password = txtPassword.getText();
+
+        try {
+
+            boolean loggedIn = server.login(username, password);
+
+            txtUsername.setText("");
+            txtPassword.setText("");
+
+            if (loggedIn) {
+                showAlertMessage(Alert.AlertType.CONFIRMATION, "Login", "Login successful!");
+            } else {
+                showAlertMessage(Alert.AlertType.INFORMATION, "Login", "Incorrect credentials");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -123,18 +153,11 @@ public class Controller {
             txtUsername.setText("");
             txtPassword.setText("");
 
-            Alert alert;
-
             if (success) {
-                alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setContentText("Registration successful!");
+                showAlertMessage(Alert.AlertType.CONFIRMATION, "Registration", "Registration successful!");
             } else {
-                alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setContentText("Registration failed!");
+                showAlertMessage(Alert.AlertType.INFORMATION, "Registration", "Registration failed!");
             }
-
-            alert.setHeaderText("Registration");
-            alert.showAndWait();
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,9 +1,8 @@
 package client;
 
-import api.dto.Book;
-import api.dto.Items;
 import api.example.Printer;
 import api.example.Student;
+import api.interfaces.BookImpl;
 import api.interfaces.ServerObjectInterface;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -24,9 +23,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 
-import java.net.MalformedURLException;
 import java.rmi.AccessException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -38,7 +35,7 @@ public class Controller {
     private ServerObjectInterface server;
     private Registry registry;
 
-    private ObservableList<Book> searchResults;
+    private ObservableList<BookImpl> searchResults;
 
     @FXML
     private TabPane tpaneMenu;
@@ -83,7 +80,7 @@ public class Controller {
     private Label lblDercypt1;
 
     @FXML
-    private ListView<Book> listViewSearchPanel;
+    private ListView<BookImpl> listViewSearchPanel;
 
     @FXML
     private Button btnAdd;
@@ -121,21 +118,15 @@ public class Controller {
 
     @FXML
     void btnSearchClicked(ActionEvent event) {
-
         String title = textFieldInput.getText();
 
         try {
-            Items items = server.getBookByTitle(title);
-            txaSearchPanel.setText(items.toString());
+            List<BookImpl> booksList = server.getBookByTitle(title);
 
-            Book[] books = items.getItems();
+            txaSearchPanel.setText(booksList.toString());
 
-            searchResults = FXCollections.observableArrayList(List.of(books));
+            searchResults = FXCollections.observableArrayList(booksList);
             listViewSearchPanel.setItems(searchResults);
-
-            //listViewSearchPanel.sele
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -144,13 +135,13 @@ public class Controller {
 
     @FXML
     void listViewSearchPanelOnClick(MouseEvent event) {
-        var book = listViewSearchPanel.getSelectionModel().getSelectedItem();
+        BookImpl book = listViewSearchPanel.getSelectionModel().getSelectedItem();
 
         txaSearchPanel.clear();
-        txaSearchPanel.setText(book.prettyPrint());
+        txaSearchPanel.setText(book.toString());
 
         try {
-            Image javafxImage = new Image(book.getImageURL());
+            Image javafxImage = new Image(book.getSmallThumbnailLink());
             imageViewSearchPane.setImage(javafxImage);
         } catch (Exception e) {
             e.printStackTrace();
@@ -163,7 +154,6 @@ public class Controller {
 //        scrPaneMyBooks.setFitToWidth(true);
 //        scrPaneMyBooks.setPrefWidth(400);
 //        scrPaneMyBooks.setPrefHeight(180);
-
 
         try {
             registry = LocateRegistry.getRegistry(7777);

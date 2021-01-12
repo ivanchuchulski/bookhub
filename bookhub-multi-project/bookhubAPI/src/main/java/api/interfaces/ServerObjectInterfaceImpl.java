@@ -1,9 +1,12 @@
 package api.interfaces;
 
+import api.dto.BookTransfer;
 import api.dto.Items;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements ServerObjectInterface {
@@ -20,18 +23,27 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
     }
 
     @Override
-    public Items getBookByTitle(String title) throws RemoteException {
-
-        Items booksByTitle = null;
-
+    public List<BookImpl> getBookByTitle(String title) throws RemoteException {
         try {
-            booksByTitle = googleBooksAPI.getBookFromGoogleAPI(title);
+            Items booksByTitle = googleBooksAPI.getBookFromGoogleAPI(title);
+            List<BookImpl> result = new ArrayList<>();
+
+            for (BookTransfer item : booksByTitle.getItems()) {
+                BookTransfer.VolumeInfo volumeInfo = item.getVolumeInfo();
+
+                result.add(new BookImpl(volumeInfo.getTitle(), volumeInfo.getAuthors(), volumeInfo.getPublisher(),
+                                        volumeInfo.getPublishedDate(), volumeInfo.getDescription(),
+                                        volumeInfo.getImageLinks().getSmallThumbnail()));
+
+            }
+            return result;
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
 
-        return booksByTitle;
+        return null;
     }
 }

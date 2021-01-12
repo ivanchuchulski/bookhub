@@ -26,5 +26,4 @@ public class Client extends Application {
         });
         stage.show();
     }
-
 }

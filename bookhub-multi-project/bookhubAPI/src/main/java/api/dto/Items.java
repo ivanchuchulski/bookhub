@@ -5,13 +5,13 @@ import java.util.Arrays;
 
 public class Items implements Serializable {
 
-    private Book[] items;
+    private BookTransfer[] items;
 
-    public Items(Book[] items) {
+    public Items(BookTransfer[] items) {
         this.items = items;
     }
 
-    public Book[] getItems() {
+    public BookTransfer[] getItems() {
         return items;
     }
 

@@ -1,13 +1,11 @@
 package api.interfaces;
 
-import api.dto.Items;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 public interface ServerObjectInterface extends Remote {
     boolean loginUser(String username, String password) throws RemoteException;
 
-    Items getBookByTitle(String title) throws RemoteException;
-
+    List<BookImpl> getBookByTitle(String title) throws RemoteException;
 }

@@ -95,6 +95,8 @@ public class Controller {
     @FXML
     private ListView<BookImpl> listViewSearchPanel;
 
+    @FXML
+    private Tab tabMyBooks;
 
     @FXML
     void btnAddBook(ActionEvent event) {
@@ -125,10 +127,20 @@ public class Controller {
             txtPassword.setText("");
 
             if (loggedIn) {
-                showAlertMessage(Alert.AlertType.CONFIRMATION, "Login", "Login successful!");
+
+                tabSearch.setDisable(false);
+                tabMyBooks.setDisable(false);
+
+                tabSearch.getContent().requestFocus();
+
+                tabLogin.setDisable(true);
+                tabPaneMenu.getTabs().remove(0);
+
+                showAlertMessage(Alert.AlertType.INFORMATION, "Login", "Login successful!");
             } else {
-                showAlertMessage(Alert.AlertType.INFORMATION, "Login", "Incorrect credentials");
+                showAlertMessage(Alert.AlertType.WARNING, "Login", "Incorrect credentials");
             }
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -199,10 +211,9 @@ public class Controller {
 
     @FXML
     void initialize() {
-//        scrPaneMyBooks.setContent(txaMyBooks);
-//        scrPaneMyBooks.setFitToWidth(true);
-//        scrPaneMyBooks.setPrefWidth(400);
-//        scrPaneMyBooks.setPrefHeight(180);
+
+        tabSearch.setDisable(true);
+        tabMyBooks.setDisable(true);
 
         try {
             registry = LocateRegistry.getRegistry(7777);

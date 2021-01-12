@@ -1,4 +1,6 @@
 api/interfaces/BookImpl.java
  api.interfaces.BookImpl
+api/interfaces/Categories.java
+ api.interfaces.Categories
 api/interfaces/ServerObjectInterface.java
  api.interfaces.ServerObjectInterface

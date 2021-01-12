@@ -2,6 +2,7 @@ package implementations;
 
 
 import api.interfaces.BookImpl;
+import api.interfaces.Categories;
 import api.interfaces.ServerObjectInterface;
 import database.DatabaseConnector;
 import dto.BookTransfer;
@@ -34,25 +35,27 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
     }
 
     @Override
-    public List<BookImpl> getBookByTitle(String title) throws RemoteException {
+    public List<BookImpl> getBookByType(Categories category, String argument) throws RemoteException {
         try {
-            Items booksByTitle = googleBooksAPI.getBookFromGoogleAPI(title);
+            Items booksByTitle = googleBooksAPI.getBookFromGoogleAPIByType(category, argument);
             List<BookImpl> result = new ArrayList<>();
 
-            for (BookTransfer item : booksByTitle.getItems()) {
-                BookTransfer.VolumeInfo volumeInfo = item.getVolumeInfo();
+            if (booksByTitle.getItems() != null) {
+                for (BookTransfer item : booksByTitle.getItems()) {
+                    BookTransfer.VolumeInfo volumeInfo = item.getVolumeInfo();
 
-                String notFoundImage = "https://drudesk.com/sites/default/files/styles/blog_page_header_1088x520" +
-                                       "/public/2018-02/404-error-page-not-found.jpg?itok=YW-iShwf";
+                    String notFoundImage = "https://drudesk.com/sites/default/files/styles/blog_page_header_1088x520" +
+                                           "/public/2018-02/404-error-page-not-found.jpg?itok=YW-iShwf";
 
-                String imageLink = volumeInfo.getImageLinks() == null ?
-                        notFoundImage : volumeInfo.getImageLinks().getSmallThumbnail();
+                    String imageLink = volumeInfo.getImageLinks() == null ?
+                            notFoundImage : volumeInfo.getImageLinks().getSmallThumbnail();
 
-                result.add(new BookImpl(volumeInfo.getTitle(), volumeInfo.getAuthors(), volumeInfo.getPublisher(),
-                        volumeInfo.getPublishedDate(), volumeInfo.getDescription(),
-                        imageLink));
+                    result.add(new BookImpl(volumeInfo.getTitle(), volumeInfo.getAuthors(), volumeInfo.getPublisher(),
+                            volumeInfo.getPublishedDate(), volumeInfo.getDescription(),
+                            imageLink));
+                }
+                return result;
             }
-            return result;
 
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();

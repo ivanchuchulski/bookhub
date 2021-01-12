@@ -1,7 +1,8 @@
 package google.books;
 
-import dto.Items;
+import api.interfaces.Categories;
 import com.google.gson.Gson;
+import dto.Items;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -29,29 +30,51 @@ public class GoogleBooksAPI {
 
     }
 
-    public Items getBookFromGoogleAPI(String title) throws ExecutionException, InterruptedException {
+    public Items getBookFromGoogleAPIByType(Categories type, String argument) throws ExecutionException, InterruptedException {
 
-        String json = getJsonFromGoogle(title);
+        Items items = null;
+
+        switch (type) {
+            case TITLE -> {
+                String parseTitle = Arrays.stream(argument.split("\\s+"))
+                        .collect(Collectors.joining("%20"));
+
+                return getBookFromGoogleAPI(parseTitle);
+            }
+            case AUTHOR -> {
+                String queryParameter = "inauthor:" + argument;
+                return getBookFromGoogleAPI(queryParameter);
+            }
+
+            case PUBLISHER -> {
+                String queryParameter = "inpublisher:" + argument;
+                return getBookFromGoogleAPI(queryParameter);
+            }
+        }
+
+        return items;
+    }
+
+    public Items getBookFromGoogleAPI(String argument) throws ExecutionException, InterruptedException {
+
+        String json = getJsonFromGoogle(argument);
 
         return gson.fromJson(json, Items.class);
     }
 
-    private String getJsonFromGoogle(String title) throws ExecutionException, InterruptedException {
+    private String getJsonFromGoogle(String argument) throws ExecutionException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                                         .uri(URI.create(buildUrlByTitle(title)))
-                                         .GET()
-                                         .build();
+                .uri(URI.create(buildUrl(argument)))
+                .GET()
+                .build();
 
         HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                                              .get();
+                .get();
 
         return response.body();
     }
 
-    private String buildUrlByTitle(String title) {
-        String parseTitle = Arrays.stream(title.split("\\s+"))
-                                  .collect(Collectors.joining("%20"));
-
-        return String.format("%s%s&%s", URL, parseTitle, API_KEY);
+    private String buildUrl(String argument) {
+        return String.format("%s%s&%s", URL, argument, API_KEY);
     }
 }

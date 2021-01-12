@@ -1,6 +1,7 @@
 package client;
 
 import api.interfaces.BookImpl;
+import api.interfaces.Categories;
 import api.interfaces.ServerObjectInterface;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -66,7 +67,7 @@ public class Controller {
     private Button btnQuit;
 
     @FXML
-    private ComboBox<?> cmbCategory;
+    private ComboBox<Categories> cmbCategory;
 
     @FXML
     private Label lblCategory;
@@ -179,15 +180,22 @@ public class Controller {
 
     @FXML
     void btnSearchClicked(ActionEvent event) {
-        String title = textSearch.getText();
+        String inputText = textSearch.getText();
+        Categories selectedCategory = cmbCategory.getSelectionModel().getSelectedItem();
+
+        listViewSearchPanel.getItems().clear();
 
         try {
-            List<BookImpl> booksList = server.getBookByTitle(title);
+            List<BookImpl> booksList = server.getBookByType(selectedCategory, inputText);
 
-            txaSearchPanel.setText(booksList.toString());
+            if (booksList != null) {
+                txaSearchPanel.setText(booksList.toString());
 
-            searchResults = FXCollections.observableArrayList(booksList);
-            listViewSearchPanel.setItems(searchResults);
+                searchResults = FXCollections.observableArrayList(booksList);
+                listViewSearchPanel.setItems(searchResults);
+            }
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -196,21 +204,28 @@ public class Controller {
 
     @FXML
     void listViewSearchPanelOnClick(MouseEvent event) {
-        BookImpl book = listViewSearchPanel.getSelectionModel().getSelectedItem();
 
-        txaSearchPanel.clear();
-        txaSearchPanel.setText(book.toString());
+        if (listViewSearchPanel.getSelectionModel().getSelectedItem() != null) {
 
-        try {
-            Image javafxImage = new Image(book.getSmallThumbnailLink());
-            imageViewSearchPane.setImage(javafxImage);
-        } catch (Exception e) {
-            e.printStackTrace();
+            BookImpl book = listViewSearchPanel.getSelectionModel().getSelectedItem();
+
+            txaSearchPanel.clear();
+            txaSearchPanel.setText(book.toString());
+
+            try {
+                Image javafxImage = new Image(book.getSmallThumbnailLink());
+                imageViewSearchPane.setImage(javafxImage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
     @FXML
     void initialize() {
+        cmbCategory.getItems().addAll(Categories.values());
+        cmbCategory.getSelectionModel().selectFirst();
 
         tabSearch.setDisable(true);
         tabMyBooks.setDisable(true);

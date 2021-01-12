@@ -6,13 +6,14 @@ dto/Items.java
  dto.Items
 server/Controller.java
  server.Controller
-google/books/GoogleBooksAPI.java
- google.books.GoogleBooksAPI
-database/User.java
- database.User
-server/Server.java
- server.Server
-implementations/ServerObjectInterfaceImpl.java
- implementations.ServerObjectInterfaceImpl
 database/DatabaseConnector.java
  database.DatabaseConnector
+database/User.java
+ database.User
+google/books/GoogleBooksAPI.java
+ google.books.GoogleBooksAPI
+ google.books.GoogleBooksAPI$1
+implementations/ServerObjectInterfaceImpl.java
+ implementations.ServerObjectInterfaceImpl
+server/Server.java
+ server.Server

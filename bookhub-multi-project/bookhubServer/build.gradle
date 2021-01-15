@@ -1,8 +1,6 @@
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.8'
-    id "org.flywaydb.flyway" version "7.4.0"
-
 }
 
 apply plugin: 'java-library'
@@ -10,17 +8,22 @@ apply plugin: 'java-library'
 group 'org.example'
 version '1.0-SNAPSHOT'
 
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    // this is for the API project
+    compile 'org.bookhub.api:bookhubAPI:1.0'
+
+    // external libraries
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'org.mariadb.jdbc:mariadb-java-client:2.1.2'
-    compile 'org.bookhub.api:bookhubAPI:1.0'
 }
 
+test {
+    useJUnitPlatform()
+}
 
 javafx {
     version = "14"
@@ -28,21 +31,10 @@ javafx {
 
 }
 
-test {
-    useJUnitPlatform()
-}
-
 mainClassName = 'server.Server'
 
 
-flyway {
-    url = 'jdbc:mysql://localhost:3306'
-    user = 'root'
-    password = ''
-    schemas = ['bookhub']
-}
-
-
+// task for database plugin
 task full(type: JavaExec) {
     description = "get started run"
     main = 'database.DatabaseConnector'

@@ -8,9 +8,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 public class GoogleBooksAPI {
     private final static String API_KEY = "AIzaSyCokdzk2dP00RWq31eMgML7nt7KBagatUQ";
@@ -24,57 +22,55 @@ public class GoogleBooksAPI {
         GoogleBooksAPI googleBooksAPI = new GoogleBooksAPI();
         String title = "Thor";
 
-        Items items = googleBooksAPI.getBookFromGoogleAPI(title);
+        Items items = googleBooksAPI.getItemsFromGoogleAPI(title);
 
         System.out.println(items);
 
     }
 
-    public Items getBookFromGoogleAPIByType(Categories type, String argument) throws ExecutionException, InterruptedException {
-
-        Items items = null;
-
+    public Items getBookFromGoogleAPIByType(Categories type, String argument) throws ExecutionException,
+            InterruptedException {
         switch (type) {
             case TITLE -> {
-                String parseTitle = Arrays.stream(argument.split("\\s+"))
-                        .collect(Collectors.joining("%20"));
-
-                return getBookFromGoogleAPI(parseTitle);
+                String titleQueryParameter = replaceSpacesWithURLEncodingSymbol(argument);
+                return getItemsFromGoogleAPI(titleQueryParameter);
             }
             case AUTHOR -> {
-                String queryParameter = "inauthor:" + argument;
-                return getBookFromGoogleAPI(queryParameter);
+                String authorQueryParameter = "inauthor:" + replaceSpacesWithURLEncodingSymbol(argument);
+                return getItemsFromGoogleAPI(authorQueryParameter);
             }
 
             case PUBLISHER -> {
-                String queryParameter = "inpublisher:" + argument;
-                return getBookFromGoogleAPI(queryParameter);
+                String publisherQueryParameter = "inpublisher:" + replaceSpacesWithURLEncodingSymbol(argument);
+                return getItemsFromGoogleAPI(publisherQueryParameter);
             }
+            default -> throw new IllegalStateException("Unexpected value: " + type);
         }
-
-        return items;
     }
 
-    public Items getBookFromGoogleAPI(String argument) throws ExecutionException, InterruptedException {
-
-        String json = getJsonFromGoogle(argument);
+    public Items getItemsFromGoogleAPI(String argument) throws ExecutionException, InterruptedException {
+        String json = sendRequestAndGetResponseBody(argument);
 
         return gson.fromJson(json, Items.class);
     }
 
-    private String getJsonFromGoogle(String argument) throws ExecutionException, InterruptedException {
+    private String sendRequestAndGetResponseBody(String argument) throws ExecutionException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(buildUrl(argument)))
-                .GET()
-                .build();
+                                         .uri(URI.create(buildUrl(argument)))
+                                         .GET()
+                                         .build();
 
         HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .get();
+                                              .get();
 
         return response.body();
     }
 
     private String buildUrl(String argument) {
         return String.format("%s%s&%s", URL, argument, API_KEY);
+    }
+
+    private String replaceSpacesWithURLEncodingSymbol(String argument) {
+        return String.join("%20", argument.split("\\s+"));
     }
 }

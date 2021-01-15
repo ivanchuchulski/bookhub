@@ -8,12 +8,12 @@ server/Controller.java
  server.Controller
 database/DatabaseConnector.java
  database.DatabaseConnector
+server/Server.java
+ server.Server
 database/User.java
  database.User
+implementations/ServerObjectInterfaceImpl.java
+ implementations.ServerObjectInterfaceImpl
 google/books/GoogleBooksAPI.java
  google.books.GoogleBooksAPI
  google.books.GoogleBooksAPI$1
-implementations/ServerObjectInterfaceImpl.java
- implementations.ServerObjectInterfaceImpl
-server/Server.java
- server.Server

@@ -1,6 +1,6 @@
 package client;
 
-import api.interfaces.BookImpl;
+import api.interfaces.Book;
 import api.interfaces.SearchCategory;
 import api.interfaces.ServerObjectInterface;
 import javafx.application.Platform;
@@ -8,7 +8,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -19,13 +29,15 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ClientController {
 
     private ServerObjectInterface server;
     private Registry registry;
+    private List<Book> searchBooksResultsList;
 
-    private ObservableList<BookImpl> searchResults;
+    private ObservableList<Book> searchBooksResult;
 
     @FXML
     private TabPane tabPaneMenu;
@@ -94,22 +106,37 @@ public class ClientController {
     private ScrollPane scrPaneMyBooks;
 
     @FXML
-    private ListView<BookImpl> listViewSearchPanel;
+    private ListView<String> listViewSearchPanel;
 
     @FXML
     private Tab tabMyBooks;
 
     @FXML
-    void btnAddBook(ActionEvent event) {
+    void initialize() {
+        cmbCategory.getItems().addAll(SearchCategory.values());
+        cmbCategory.getSelectionModel().selectFirst();
 
-    }
+        tabSearch.setDisable(true);
+        tabMyBooks.setDisable(true);
 
-    private void showAlertMessage(Alert.AlertType type, String header, String context) {
-        Alert alert = new Alert(type);
-        alert.setHeaderText(header);
-        alert.setContentText(context);
+        try {
+            registry = LocateRegistry.getRegistry(7777);
+            server = (ServerObjectInterface) registry.lookup("interface");
 
-        alert.showAndWait();
+        } catch (AccessException e) {
+            e.printStackTrace();
+        } catch (RemoteException | NotBoundException e) {
+            e.printStackTrace();
+
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Connecting to login panel");
+            alert.setContentText("Error connecting to server Please try again later");
+
+            alert.showAndWait();
+
+            Platform.exit();
+            System.exit(0);
+        }
     }
 
     @FXML
@@ -142,11 +169,6 @@ public class ClientController {
     }
 
     @FXML
-    void btnQuitClicked(ActionEvent event) {
-
-    }
-
-    @FXML
     void btnRegisterClicked(ActionEvent event) {
         String username = txtUsername.getText();
         String password = txtPassword.getText();
@@ -169,20 +191,44 @@ public class ClientController {
     }
 
     @FXML
+    void btnQuitClicked(ActionEvent event) {
+
+    }
+
+    @FXML
     void btnSearchClicked(ActionEvent event) {
-        String inputText = textSearch.getText();
-        SearchCategory selectedCategory = cmbCategory.getSelectionModel().getSelectedItem();
-
-        listViewSearchPanel.getItems().clear();
-
         try {
-            List<BookImpl> booksList = server.getBookByType(selectedCategory, inputText);
+            String inputText = textSearch.getText();
+            SearchCategory selectedCategory = cmbCategory.getSelectionModel().getSelectedItem();
 
-            if (booksList != null) {
-                txaSearchPanel.setText(booksList.toString());
+            listViewSearchPanel.getItems().clear();
 
-                searchResults = FXCollections.observableArrayList(booksList);
-                listViewSearchPanel.setItems(searchResults);
+            searchBooksResultsList = server.getBookByType(selectedCategory, inputText);
+
+            // clear the list
+            listViewSearchPanel.getItems().clear();
+            txaSearchPanel.clear();
+            imageViewSearchPane.setImage(null);
+
+            if (searchBooksResultsList != null) {
+                txaSearchPanel.setText("select a book to view it's description");
+
+                List<String> bookInfos = searchBooksResultsList.stream()
+                                                               .map(book -> {
+                                                                   try {
+                                                                       return book.printInfo();
+                                                                   } catch (RemoteException e) {
+                                                                       e.printStackTrace();
+                                                                   }
+                                                                   return null;
+                                                               })
+                                                               .collect(Collectors.toList());
+
+                listViewSearchPanel.getItems().clear();
+                listViewSearchPanel.getItems().addAll(bookInfos);
+
+            } else {
+                listViewSearchPanel.setItems(FXCollections.observableArrayList(List.of("nothing found")));
             }
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -190,9 +236,29 @@ public class ClientController {
     }
 
     @FXML
-    void listViewSearchPanelOnClick(MouseEvent event) {
+    void listViewSearchPanelOnClick(MouseEvent event) throws RemoteException {
         if (listViewSearchPanel.getSelectionModel().getSelectedItem() != null) {
-            BookImpl book = listViewSearchPanel.getSelectionModel().getSelectedItem();
+            // get the title by looking at the separator in book printInfo method, and split by that separator
+            String separator = " : ";
+            String selectedBookTitle = listViewSearchPanel.getSelectionModel().getSelectedItem().split(separator)[0];
+
+            System.out.println("selected : " + selectedBookTitle);
+
+            Book book = null;
+
+            for (Book searchResult : searchBooksResultsList) {
+                System.out.println(searchResult.getTitle());
+
+                if (searchResult.getTitle().equals(selectedBookTitle)) {
+                    book = searchResult;
+                }
+            }
+
+            if (book == null) {
+                txaSearchPanel.clear();
+                txaSearchPanel.setText("error");
+                return;
+            }
 
             txaSearchPanel.clear();
             txaSearchPanel.setText(book.getDescription());
@@ -207,30 +273,15 @@ public class ClientController {
     }
 
     @FXML
-    void initialize() {
-        cmbCategory.getItems().addAll(SearchCategory.values());
-        cmbCategory.getSelectionModel().selectFirst();
+    void btnAddBook(ActionEvent event) {
 
-        tabSearch.setDisable(true);
-        tabMyBooks.setDisable(true);
+    }
 
-        try {
-            registry = LocateRegistry.getRegistry(7777);
-            server = (ServerObjectInterface) registry.lookup("interface");
+    private void showAlertMessage(Alert.AlertType type, String header, String context) {
+        Alert alert = new Alert(type);
+        alert.setHeaderText(header);
+        alert.setContentText(context);
 
-        } catch (AccessException e) {
-            e.printStackTrace();
-        } catch (RemoteException | NotBoundException e) {
-            e.printStackTrace();
-
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Connecting to login panel");
-            alert.setContentText("Error connecting to server Please try again later");
-
-            alert.showAndWait();
-
-            Platform.exit();
-            System.exit(0);
-        }
+        alert.showAndWait();
     }
 }

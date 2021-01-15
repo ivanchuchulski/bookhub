@@ -1,10 +1,14 @@
-package api.interfaces;
+package implementations;
 
-import java.io.Serializable;
+import api.interfaces.Book;
+
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
+import java.util.List;
 
 // this object is used for sending to the client
-public class BookImpl implements Serializable {
+public class BookImpl extends UnicastRemoteObject implements Book {
     private final String title;
     // this could become just a single String for one author
     private final String[] authors;
@@ -14,7 +18,8 @@ public class BookImpl implements Serializable {
     private final String smallThumbnailLink;
 
     public BookImpl(String title, String[] authors, String publisher, String publishedDate, String description,
-                    String smallThumbnailLink) {
+                    String smallThumbnailLink) throws RemoteException {
+        super();
         this.title = title;
         this.authors = authors;
         this.publisher = publisher;
@@ -24,7 +29,8 @@ public class BookImpl implements Serializable {
     }
 
     public BookImpl(String title, String publisher, String publishedDate, String description,
-                    String smallThumbnailLink) {
+                    String smallThumbnailLink) throws RemoteException {
+        super();
         this.title = title;
         this.publisher = publisher;
         this.authors = null;
@@ -33,28 +39,41 @@ public class BookImpl implements Serializable {
         this.smallThumbnailLink = smallThumbnailLink;
     }
 
-    public String getTitle() {
+    @Override
+    public String getTitle() throws RemoteException {
         return title;
     }
 
-    public String[] getAuthors() {
+    @Override
+    public String[] getAuthors() throws RemoteException {
         return authors;
     }
 
-    public String getPublisher() {
+    @Override
+    public String getPublisher() throws RemoteException {
         return publisher;
     }
 
-    public String getPublishedDate() {
+    @Override
+    public String getPublishedDate() throws RemoteException {
         return publishedDate;
     }
 
-    public String getDescription() {
+    @Override
+    public String getDescription() throws RemoteException {
         return description;
     }
 
-    public String getSmallThumbnailLink() {
+    @Override
+    public String getSmallThumbnailLink() throws RemoteException {
         return smallThumbnailLink;
+    }
+
+    @Override
+    public String printInfo() throws RemoteException {
+        String separator = " : ";
+
+        return String.join(separator, getTitle(), Arrays.toString(getAuthors()), getPublishedDate());
     }
 
     @Override
@@ -67,5 +86,6 @@ public class BookImpl implements Serializable {
                 ", description='" + description + '\'' +
                 ", smallThumbnailLink='" + smallThumbnailLink + '\'' +
                 '}';
+
     }
 }

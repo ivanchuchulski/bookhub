@@ -1,7 +1,7 @@
 package implementations;
 
 
-import api.interfaces.BookImpl;
+import api.interfaces.Book;
 import api.interfaces.SearchCategory;
 import api.interfaces.ServerObjectInterface;
 import database.DatabaseConnector;
@@ -35,10 +35,10 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
     }
 
     @Override
-    public List<BookImpl> getBookByType(SearchCategory category, String argument) throws RemoteException {
+    public List<Book> getBookByType(SearchCategory category, String argument) throws RemoteException {
         try {
             Items booksByTitle = googleBooksAPI.getBookFromGoogleAPIByType(category, argument);
-            List<BookImpl> result = new ArrayList<>();
+            List<Book> result = new ArrayList<>();
 
             if (booksByTitle.getItems() != null) {
                 for (BookTransfer item : booksByTitle.getItems()) {

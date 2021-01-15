@@ -10,10 +10,12 @@ database/DatabaseConnector.java
  database.DatabaseConnector
 server/ServerController.java
  server.ServerController
+google/books/GoogleBooksAPI.java
+ google.books.GoogleBooksAPI
+ google.books.GoogleBooksAPI$1
 server/Server.java
  server.Server
 implementations/ServerObjectInterfaceImpl.java
  implementations.ServerObjectInterfaceImpl
-google/books/GoogleBooksAPI.java
- google.books.GoogleBooksAPI
- google.books.GoogleBooksAPI$1
+implementations/BookImpl.java
+ implementations.BookImpl

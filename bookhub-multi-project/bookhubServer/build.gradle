@@ -28,7 +28,6 @@ test {
 javafx {
     version = "14"
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.graphics']
-
 }
 
 mainClassName = 'server.Server'

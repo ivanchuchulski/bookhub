@@ -9,7 +9,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
-public class Controller {
+public class ServerController {
 
     @FXML
     private Label lblAccountInfo;

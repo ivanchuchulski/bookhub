@@ -1,7 +1,7 @@
 package client;
 
 import api.interfaces.BookImpl;
-import api.interfaces.Categories;
+import api.interfaces.SearchCategory;
 import api.interfaces.ServerObjectInterface;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -20,7 +20,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.List;
 
-public class Controller {
+public class ClientController {
 
     private ServerObjectInterface server;
     private Registry registry;
@@ -67,7 +67,7 @@ public class Controller {
     private Button btnQuit;
 
     @FXML
-    private ComboBox<Categories> cmbCategory;
+    private ComboBox<SearchCategory> cmbCategory;
 
     @FXML
     private Label lblCategory;
@@ -105,7 +105,6 @@ public class Controller {
     }
 
     private void showAlertMessage(Alert.AlertType type, String header, String context) {
-
         Alert alert = new Alert(type);
         alert.setHeaderText(header);
         alert.setContentText(context);
@@ -113,22 +112,18 @@ public class Controller {
         alert.showAndWait();
     }
 
-
     @FXML
     void btnLoginClicked(ActionEvent event) {
-
         String username = txtUsername.getText();
         String password = txtPassword.getText();
 
         try {
-
             boolean loggedIn = server.login(username, password);
 
             txtUsername.setText("");
             txtPassword.setText("");
 
             if (loggedIn) {
-
                 tabSearch.setDisable(false);
                 tabMyBooks.setDisable(false);
 
@@ -141,12 +136,9 @@ public class Controller {
             } else {
                 showAlertMessage(Alert.AlertType.WARNING, "Login", "Incorrect credentials");
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     @FXML
@@ -156,7 +148,6 @@ public class Controller {
 
     @FXML
     void btnRegisterClicked(ActionEvent event) {
-
         String username = txtUsername.getText();
         String password = txtPassword.getText();
 
@@ -175,13 +166,12 @@ public class Controller {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     @FXML
     void btnSearchClicked(ActionEvent event) {
         String inputText = textSearch.getText();
-        Categories selectedCategory = cmbCategory.getSelectionModel().getSelectedItem();
+        SearchCategory selectedCategory = cmbCategory.getSelectionModel().getSelectedItem();
 
         listViewSearchPanel.getItems().clear();
 
@@ -194,23 +184,18 @@ public class Controller {
                 searchResults = FXCollections.observableArrayList(booksList);
                 listViewSearchPanel.setItems(searchResults);
             }
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
-
     }
 
     @FXML
     void listViewSearchPanelOnClick(MouseEvent event) {
-
         if (listViewSearchPanel.getSelectionModel().getSelectedItem() != null) {
-
             BookImpl book = listViewSearchPanel.getSelectionModel().getSelectedItem();
 
             txaSearchPanel.clear();
-            txaSearchPanel.setText(book.toString());
+            txaSearchPanel.setText(book.getDescription());
 
             try {
                 Image javafxImage = new Image(book.getSmallThumbnailLink());
@@ -218,13 +203,12 @@ public class Controller {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
     }
 
     @FXML
     void initialize() {
-        cmbCategory.getItems().addAll(Categories.values());
+        cmbCategory.getItems().addAll(SearchCategory.values());
         cmbCategory.getSelectionModel().selectFirst();
 
         tabSearch.setDisable(true);
@@ -248,7 +232,5 @@ public class Controller {
             Platform.exit();
             System.exit(0);
         }
-
-        //tabSearch.setDisable(true); // disable Operations tab
     }
 }

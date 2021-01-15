@@ -10,5 +10,5 @@ public interface ServerObjectInterface extends Remote {
 
     boolean login(String username, String password) throws RemoteException;
 
-    List<BookImpl> getBookByType(Categories category, String argument) throws RemoteException;
+    List<BookImpl> getBookByType(SearchCategory category, String argument) throws RemoteException;
 }

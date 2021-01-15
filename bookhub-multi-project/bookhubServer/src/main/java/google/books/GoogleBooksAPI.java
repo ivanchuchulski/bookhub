@@ -1,6 +1,6 @@
 package google.books;
 
-import api.interfaces.Categories;
+import api.interfaces.SearchCategory;
 import com.google.gson.Gson;
 import dto.Items;
 
@@ -28,7 +28,7 @@ public class GoogleBooksAPI {
 
     }
 
-    public Items getBookFromGoogleAPIByType(Categories type, String argument) throws ExecutionException,
+    public Items getBookFromGoogleAPIByType(SearchCategory type, String argument) throws ExecutionException,
             InterruptedException {
         switch (type) {
             case TITLE -> {

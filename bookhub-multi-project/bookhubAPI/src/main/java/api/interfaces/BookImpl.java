@@ -6,6 +6,7 @@ import java.util.Arrays;
 // this object is used for sending to the client
 public class BookImpl implements Serializable {
     private final String title;
+    // this could become just a single String for one author
     private final String[] authors;
     private final String publisher;
     private final String publishedDate;
@@ -17,6 +18,16 @@ public class BookImpl implements Serializable {
         this.title = title;
         this.authors = authors;
         this.publisher = publisher;
+        this.publishedDate = publishedDate;
+        this.description = description;
+        this.smallThumbnailLink = smallThumbnailLink;
+    }
+
+    public BookImpl(String title, String publisher, String publishedDate, String description,
+                    String smallThumbnailLink) {
+        this.title = title;
+        this.publisher = publisher;
+        this.authors = null;
         this.publishedDate = publishedDate;
         this.description = description;
         this.smallThumbnailLink = smallThumbnailLink;

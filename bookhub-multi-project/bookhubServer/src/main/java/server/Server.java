@@ -19,7 +19,6 @@ public class Server extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-
         ServerObjectInterface server = new ServerObjectInterfaceImpl(); // create Interface instance
         Registry registry = LocateRegistry.createRegistry(7777); //  create registry
         registry.bind("interface", server); // bind registry to object

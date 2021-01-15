@@ -1,4 +1,4 @@
 client/Client.java
  client.Client
-client/Controller.java
- client.Controller
+client/ClientController.java
+ client.ClientController

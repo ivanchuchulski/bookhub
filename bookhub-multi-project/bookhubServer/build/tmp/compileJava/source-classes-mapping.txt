@@ -4,14 +4,14 @@ dto/BookTransfer.java
  dto.BookTransfer$VolumeInfo$GoogleImages
 dto/Items.java
  dto.Items
-server/Controller.java
- server.Controller
-database/DatabaseConnector.java
- database.DatabaseConnector
-server/Server.java
- server.Server
 database/User.java
  database.User
+database/DatabaseConnector.java
+ database.DatabaseConnector
+server/ServerController.java
+ server.ServerController
+server/Server.java
+ server.Server
 implementations/ServerObjectInterfaceImpl.java
  implementations.ServerObjectInterfaceImpl
 google/books/GoogleBooksAPI.java

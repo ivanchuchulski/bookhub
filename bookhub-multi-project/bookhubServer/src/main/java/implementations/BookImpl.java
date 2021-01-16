@@ -19,7 +19,7 @@ public class BookImpl extends UnicastRemoteObject implements Book {
     private final String description;
     private final String smallThumbnailLink;
 
-    public BookImpl(String id ,String title, String[] authors, String publisher, String publishedDate, String description,
+    public BookImpl(String title, String id, String[] authors, String publisher, String publishedDate, String description,
                     String smallThumbnailLink) throws RemoteException {
         super();
         this.id = id;
@@ -31,7 +31,7 @@ public class BookImpl extends UnicastRemoteObject implements Book {
         this.smallThumbnailLink = smallThumbnailLink;
     }
 
-    public BookImpl(String id, String title, String publisher, String publishedDate, String description,
+    public BookImpl(String title, String id, String publisher, String publishedDate, String description,
                     String smallThumbnailLink) throws RemoteException {
         super();
         this.id = id;

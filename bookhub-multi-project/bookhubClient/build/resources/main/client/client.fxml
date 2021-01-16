@@ -99,11 +99,11 @@
                                 <Button layoutX="737.0" layoutY="450.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="98.0" text="Remove Book" />
                                 <Button layoutX="737.0" layoutY="502.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="98.0" text="Quit" />
                                 <Label layoutX="533.0" layoutY="91.0" text="Description" />
-                                <ListView fx:id="listViewMyBooks" layoutX="51.0" layoutY="124.0" prefHeight="345.0" prefWidth="372.0" />
+                                <ListView fx:id="listViewMyBooks" layoutX="51.0" layoutY="124.0" onMouseClicked="#listViewMyBooksClicked" prefHeight="345.0" prefWidth="372.0" />
                                 <TextField layoutX="52.0" layoutY="26.0" prefHeight="26.0" prefWidth="376.0" promptText="Search title" />
                         <Button fx:id="btnSearchMyBooks" layoutX="52.0" layoutY="66.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="81.0" text="Search" />
                         <ImageView fx:id="imgViewMyBooks" fitHeight="139.0" fitWidth="194.0" layoutX="466.0" layoutY="335.0" pickOnBounds="true" preserveRatio="true" />
-                                  <TextArea layoutX="465.0" layoutY="124.0" prefHeight="200.0" prefWidth="200.0" />
+                                  <TextArea fx:id="txaMyBooks" layoutX="465.0" layoutY="124.0" prefHeight="200.0" prefWidth="200.0" />
                         <Button fx:id="btnSetPreferenceMyBooks" alignment="CENTER" layoutX="737.0" layoutY="389.0" mnemonicParsing="false" onAction="#btnSetPreferenceMyBooksClicked" prefHeight="44.0" prefWidth="98.0" text="Set Preference" />
                         <Button fx:id="btnFetchBooks" layoutX="737.0" layoutY="332.0" mnemonicParsing="false" onAction="#btnFetchBooksClicked" prefHeight="38.0" prefWidth="92.0" text="Fetch Books" />
                             </children>

@@ -129,6 +129,36 @@ public class ClientController {
     private Button btnFetchBooks;
 
     @FXML
+    private TextArea txaMyBooks;
+
+
+    @FXML
+    void listViewMyBooksClicked(MouseEvent event) {
+        try {
+            if (listViewMyBooks.getSelectionModel().getSelectedItem() != null) {
+                int index = listViewMyBooks.getSelectionModel().getSelectedIndex();
+
+                if (index == -1) {
+                    txaMyBooks.clear();
+                    txaMyBooks.setText("error");
+                    return;
+                }
+
+                Book selectedBook = (Book) userBookMap.keySet().toArray()[index];
+
+                txaMyBooks.clear();
+                txaMyBooks.setText(selectedBook.getDescription());
+
+                Image javafxImage = new Image(selectedBook.getSmallThumbnailLink());
+                imgViewMyBooks.setImage(javafxImage);
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @FXML
     void btnFetchBooksClicked(ActionEvent event) {
 
         try {
@@ -138,7 +168,14 @@ public class ClientController {
             userBooksResultsList = new ArrayList(userBookMap.keySet());
 
             ObservableList<String> myBooksObservableList = FXCollections.observableList(userBooksResultsList
-            .stream().map(String::valueOf).collect(Collectors.toList()));
+                    .stream().map(e -> {
+                        try {
+                            return String.format("%s", e.getTitle());
+                        } catch (RemoteException remoteException) {
+                            remoteException.printStackTrace();
+                        }
+                        return null;
+                    }).collect(Collectors.toList()));
 
             listViewMyBooks.setItems(myBooksObservableList);
         } catch (RemoteException e) {
@@ -169,7 +206,6 @@ public class ClientController {
 
         cmbPreferencesMyBooks.getItems().addAll(BookPreference.values());
         cmbPreferencesMyBooks.getSelectionModel().selectFirst();
-
 
 
         // add scroll pane to text Search Panel and wrap text in it
@@ -302,27 +338,16 @@ public class ClientController {
     @FXML
     void listViewSearchPanelOnClick(MouseEvent event) throws RemoteException {
         if (listViewSearchPanel.getSelectionModel().getSelectedItem() != null) {
-            // get the title by looking at the separator in book printInfo method, and split by that separator
-            String separator = " : ";
-            String selectedBookTitle = listViewSearchPanel.getSelectionModel().getSelectedItem().split(separator)[0];
+            
+            int index = listViewSearchPanel.getSelectionModel().getSelectedIndex();
 
-            System.out.println("selected : " + selectedBookTitle);
-
-            Book book = null;
-
-            for (Book searchResult : searchBooksResultsList) {
-                System.out.println(searchResult.getTitle());
-
-                if (searchResult.getTitle().equals(selectedBookTitle)) {
-                    book = searchResult;
-                }
-            }
-
-            if (book == null) {
+            if (index == -1) {
                 txaSearchPanel.clear();
                 txaSearchPanel.setText("error");
                 return;
             }
+
+            var book = searchBooksResultsList.get(index);
 
             txaSearchPanel.clear();
             txaSearchPanel.setText(book.getDescription());

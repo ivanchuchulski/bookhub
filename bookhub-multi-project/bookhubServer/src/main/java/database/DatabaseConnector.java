@@ -175,7 +175,6 @@ public class DatabaseConnector {
 
         } catch (SQLException | RemoteException e) {
             e.printStackTrace();
-            //     return false;
         }
 
 
@@ -209,11 +208,7 @@ public class DatabaseConnector {
                 String bookSmallThumbnailLink = resultSet.getString("smallThumbnailLink");
 
                 String bookPreferenceString = String.join("_",
-                                resultSet.getString("preferenceType").toUpperCase().split("\\s+"));
-
-//                BookPreference bookPreference = BookPreference.valueOf(resultSet.getString("preferenceType"));
-
-                System.out.println(bookPreferenceString);
+                        resultSet.getString("preferenceType").toUpperCase().split("\\s+"));
 
                 var book = new BookImpl(bookTitle, bookId, bookPublisher, bookPublishedDate,
                         bookDescription, bookSmallThumbnailLink);

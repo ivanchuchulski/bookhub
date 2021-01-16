@@ -52,7 +52,7 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
                     String imageLink = volumeInfo.getImageLinks() == null ?
                             notFoundImage : volumeInfo.getImageLinks().getSmallThumbnail();
 
-                    result.add(new BookImpl(item.getId(), volumeInfo.getTitle(), volumeInfo.getAuthors(), volumeInfo.getPublisher(),
+                    result.add(new BookImpl(volumeInfo.getTitle(), item.getId(), volumeInfo.getAuthors(), volumeInfo.getPublisher(),
                             volumeInfo.getPublishedDate(), volumeInfo.getDescription(),
                             imageLink));
                 }

@@ -137,6 +137,31 @@ public class ClientController {
     @FXML
     private TextArea txaMyBooks;
 
+    @FXML
+    private Button btnClearFilter;
+
+
+    @FXML
+    void btnClearFilterClicked(ActionEvent event) {
+        clearMyBooksGUI();
+        searchFilter = false;
+        temporaryFilterBooks.clear();
+        txtSearchTitleMyBooks.clear();
+
+
+        ObservableList<String> myBooksObservableList = FXCollections.observableList(userBooksResultsList
+                .stream().map(e -> {
+                    try {
+                        return String.format("%s, %s", e.getTitle(), e.getPublishedDate());
+                    } catch (RemoteException remoteException) {
+                        remoteException.printStackTrace();
+                    }
+                    return null;
+                }).collect(Collectors.toList()));
+
+        listViewMyBooks.setItems(myBooksObservableList);
+    }
+
 
     @FXML
     void btnSearchMyBooksClicked(ActionEvent event) {

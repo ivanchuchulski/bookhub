@@ -105,7 +105,8 @@
                         <ImageView fx:id="imgViewMyBooks" fitHeight="139.0" fitWidth="194.0" layoutX="466.0" layoutY="335.0" pickOnBounds="true" preserveRatio="true" />
                                   <TextArea fx:id="txaMyBooks" layoutX="465.0" layoutY="124.0" prefHeight="200.0" prefWidth="200.0" />
                         <Button fx:id="btnSetPreferenceMyBooks" alignment="CENTER" layoutX="737.0" layoutY="389.0" mnemonicParsing="false" onAction="#btnSetPreferenceMyBooksClicked" prefHeight="44.0" prefWidth="98.0" text="Set Preference" />
-                        <Button fx:id="btnFetchBooks" layoutX="737.0" layoutY="332.0" mnemonicParsing="false" onAction="#btnFetchBooksClicked" prefHeight="38.0" prefWidth="92.0" text="Fetch Books" />
+                        <Button fx:id="btnFetchBooks" layoutX="740.0" layoutY="277.0" mnemonicParsing="false" onAction="#btnFetchBooksClicked" prefHeight="38.0" prefWidth="92.0" text="Fetch Books" />
+                        <Button fx:id="btnClearFilter" layoutX="740.0" layoutY="335.0" mnemonicParsing="false" onAction="#btnClearFilterClicked" prefHeight="38.0" prefWidth="92.0" text="Clear Filter " />
                             </children>
                         </AnchorPane>
                     </content>

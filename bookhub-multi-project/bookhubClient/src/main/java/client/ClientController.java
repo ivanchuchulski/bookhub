@@ -34,8 +34,12 @@ public class ClientController {
 
     private List<Book> userBooksResultsList;
 
-
     private String username;
+
+    private boolean searchFilter = false;
+
+    private List<Book> temporaryFilterBooks = new ArrayList<>();
+
 
     @FXML
     private TabPane tabPaneMenu;
@@ -124,6 +128,8 @@ public class ClientController {
     @FXML
     private ListView<String> listViewMyBooks;
 
+    @FXML
+    private TextField txtSearchTitleMyBooks;
 
     @FXML
     private Button btnFetchBooks;
@@ -132,12 +138,51 @@ public class ClientController {
     private TextArea txaMyBooks;
 
 
+    @FXML
+    void btnSearchMyBooksClicked(ActionEvent event) {
+        String title = txtSearchTitleMyBooks.getText().toLowerCase();
+
+        searchFilter = true;
+
+        List<Book> books = new ArrayList<>();
+        temporaryFilterBooks.clear();
+
+
+        userBooksResultsList.stream()
+                .filter(e -> {
+                    try {
+                        return e.getTitle().toLowerCase().contains(title);
+                    } catch (RemoteException remoteException) {
+                        remoteException.printStackTrace();
+                    }
+                    return false;
+                }).forEach(e -> {
+            books.add(e);
+            temporaryFilterBooks.add(e);
+        });
+
+        temporaryFilterBooks.forEach(e -> {
+            try {
+                System.out.println(e.printInfo());
+            } catch (RemoteException remoteException) {
+                remoteException.printStackTrace();
+            }
+        });
+
+
+        System.out.println(temporaryFilterBooks.size());
+
+        var observableList = getObservableList(books);
+        listViewMyBooks.setItems(observableList);
+    }
+
+
     private ObservableList<String> getObservableList(List<Book> books) {
 
         ObservableList<String> myBooksObservableList = FXCollections.observableList(books
                 .stream().map(e -> {
                     try {
-                        return String.format("%s", e.getTitle());
+                        return String.format("%s, %s", e.getTitle(), e.getPublishedDate());
                     } catch (RemoteException remoteException) {
                         remoteException.printStackTrace();
                     }
@@ -151,7 +196,10 @@ public class ClientController {
     void listViewMyBooksClicked(MouseEvent event) {
         try {
             if (listViewMyBooks.getSelectionModel().getSelectedItem() != null) {
+
                 int index = listViewMyBooks.getSelectionModel().getSelectedIndex();
+                String content = listViewMyBooks.getSelectionModel().getSelectedItem();
+
 
                 if (index == -1) {
                     txaMyBooks.clear();
@@ -159,7 +207,19 @@ public class ClientController {
                     return;
                 }
 
-                Book selectedBook = (Book) userBookMap.keySet().toArray()[index];
+                Book selectedBook = null;
+
+                if (searchFilter) {
+                    for (Book book : temporaryFilterBooks) {
+                        if (String.format("%s, %s", book.getTitle(), book.getPublishedDate()).equals(content)) {
+                            selectedBook = book;
+                            break;
+                        }
+                    }
+
+                } else {
+                    selectedBook = (Book) userBookMap.keySet().toArray()[index];
+                }
 
                 txaMyBooks.clear();
                 txaMyBooks.setText(selectedBook.getDescription());
@@ -180,10 +240,18 @@ public class ClientController {
 
     }
 
+    private void clearTemporaryBooksList() {
+        searchFilter = false;
+        temporaryFilterBooks.clear();
+
+    }
+
     @FXML
     void btnFetchBooksClicked(ActionEvent event) {
 
         try {
+
+            clearTemporaryBooksList();
 
             userBookMap = server.getBooksForUser(username);
 
@@ -192,7 +260,7 @@ public class ClientController {
             ObservableList<String> myBooksObservableList = FXCollections.observableList(userBooksResultsList
                     .stream().map(e -> {
                         try {
-                            return String.format("%s", e.getTitle());
+                            return String.format("%s, %s", e.getTitle(), e.getPublishedDate());
                         } catch (RemoteException remoteException) {
                             remoteException.printStackTrace();
                         }
@@ -246,14 +314,27 @@ public class ClientController {
             return;
         }
 
+        txaMyBooks.clear();
+        imgViewMyBooks.setImage(null);
+
+
         BookPreference preference = BookPreference.values()[selectedIndex];
 
         if (userBooksResultsList == null) {
             return;
         }
 
-        var booksForCategory = userBooksResultsList.stream()
-                .filter(e -> userBookMap.get(e).equals(preference)).collect(Collectors.toList());
+        List<Book> booksForCategory;
+
+        if (searchFilter) {
+            booksForCategory = temporaryFilterBooks.stream()
+                    .filter(e -> userBookMap.get(e).equals(preference)).collect(Collectors.toList());
+
+        } else {
+            booksForCategory = userBooksResultsList.stream()
+                    .filter(e -> userBookMap.get(e).equals(preference)).collect(Collectors.toList());
+        }
+
         ObservableList<String> observableList = getObservableList(booksForCategory);
         listViewMyBooks.setItems(observableList);
     }

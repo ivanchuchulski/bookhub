@@ -11,11 +11,11 @@ database/User.java
  database.User
 implementations/BookImpl.java
  implementations.BookImpl
-server/ServerController.java
- server.ServerController
+database/DatabaseConnector.java
+ database.DatabaseConnector
 implementations/ServerObjectInterfaceImpl.java
  implementations.ServerObjectInterfaceImpl
 server/Server.java
  server.Server
-database/DatabaseConnector.java
- database.DatabaseConnector
+server/ServerController.java
+ server.ServerController

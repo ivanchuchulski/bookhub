@@ -140,6 +140,12 @@ public class ClientController {
     @FXML
     private Button btnClearFilter;
 
+    @FXML
+    private Button btnRemoveBook;
+
+    @FXML
+    private Button btnQuitMyBooks;
+
 
     @FXML
     void btnClearFilterClicked(ActionEvent event) {
@@ -169,14 +175,15 @@ public class ClientController {
 
         searchFilter = true;
 
+        BookPreference preference = cmbPreferencesMyBooks.getSelectionModel().getSelectedItem();
+
         List<Book> books = new ArrayList<>();
         temporaryFilterBooks.clear();
-
 
         userBooksResultsList.stream()
                 .filter(e -> {
                     try {
-                        return e.getTitle().toLowerCase().contains(title);
+                        return e.getTitle().toLowerCase().contains(title) && userBookMap.get(e).equals(preference);
                     } catch (RemoteException remoteException) {
                         remoteException.printStackTrace();
                     }
@@ -309,6 +316,41 @@ public class ClientController {
     @FXML
     void btnSetPreferenceMyBooksClicked(ActionEvent e) {
 
+
+    }
+
+    @FXML
+    void btnRemoveBookClicked(ActionEvent event) {
+
+        try {
+            if (listViewMyBooks.getSelectionModel().getSelectedItem() != null) {
+
+                int index = listViewMyBooks.getSelectionModel().getSelectedIndex();
+                String content = listViewMyBooks.getSelectionModel().getSelectedItem();
+
+                if (index == -1) {
+                    return;
+                }
+
+                Book selectedBook = null;
+
+                if (searchFilter) {
+                    for (Book book : temporaryFilterBooks) {
+                        if (String.format("%s, %s", book.getTitle(), book.getPublishedDate()).equals(content)) {
+                            selectedBook = book;
+                            break;
+                        }
+                    }
+                } else {
+                    selectedBook = (Book) userBookMap.keySet().toArray()[index];
+                }
+                server.removeBook(username, selectedBook.getId());
+
+                btnFetchBooksClicked(event);
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -461,8 +503,14 @@ public class ClientController {
 
     @FXML
     void btnQuitClicked(ActionEvent event) {
-
+        Platform.exit();
     }
+
+    @FXML
+    void btnQuitMyBooksClicked(ActionEvent event) {
+        Platform.exit();
+    }
+
 
     @FXML
     void btnSearchClicked(ActionEvent event) {

@@ -267,5 +267,25 @@ public class DatabaseConnector {
 
     }
 
+    public void removeBook(String username, String bookId) {
+
+        try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
+
+            System.out.println("Connecting to DB");
+
+            String sql = "DELETE FROM preferences WHERE username = ? AND bookId = ?";
+
+            PreparedStatement prep = connection.prepareStatement(sql);
+            prep.setString(1, username);
+            prep.setString(2, bookId);
+
+            prep.execute();
+            prep.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
 }

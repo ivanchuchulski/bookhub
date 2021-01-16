@@ -13,9 +13,9 @@ dto/BookTransfer.java
  dto.BookTransfer$VolumeInfo$GoogleImages
 dto/Items.java
  dto.Items
-database/DatabaseConnector.java
- database.DatabaseConnector
 implementations/ServerObjectInterfaceImpl.java
  implementations.ServerObjectInterfaceImpl
 server/Server.java
  server.Server
+database/DatabaseConnector.java
+ database.DatabaseConnector

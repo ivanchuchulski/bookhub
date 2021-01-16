@@ -75,4 +75,9 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
     public Map<Book, BookPreference> getBooksForUser(String username) throws RemoteException {
         return databaseConnector.getBooksForUser(username);
     }
+
+    @Override
+    public void removeBook(String username, String bookId) throws RemoteException {
+        databaseConnector.removeBook(username, bookId);
+    }
 }

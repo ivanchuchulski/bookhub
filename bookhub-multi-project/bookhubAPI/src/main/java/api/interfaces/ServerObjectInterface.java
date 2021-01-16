@@ -16,4 +16,6 @@ public interface ServerObjectInterface extends Remote {
     boolean addUserBookPreference(String username, Book book, BookPreference bookPreference) throws RemoteException;
 
     Map<Book, BookPreference> getBooksForUser(String username) throws RemoteException;
+
+    void removeBook(String username, String bookId) throws RemoteException;
 }

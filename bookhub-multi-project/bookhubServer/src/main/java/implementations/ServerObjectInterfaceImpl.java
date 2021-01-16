@@ -66,7 +66,7 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
     }
 
     @Override
-    public boolean addUserBookPreference(String username, String title, BookPreference bookPreference) throws RemoteException {
-        return databaseConnector.addUserPreferenceBookToDB(username, title, bookPreference);
+    public boolean addUserBookPreference(String username, Book book, BookPreference bookPreference) throws RemoteException {
+        return databaseConnector.addUserPreferenceBookToDB(username, book, bookPreference);
     }
 }

@@ -1,6 +1,7 @@
 package client;
 
 import api.interfaces.Book;
+import api.interfaces.BookPreference;
 import api.interfaces.SearchCategory;
 import api.interfaces.ServerObjectInterface;
 import javafx.application.Platform;
@@ -8,17 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -93,7 +84,7 @@ public class ClientController {
     private Label lblSearch;
 
     @FXML
-    private ComboBox<?> cmbAction;
+    private ComboBox<BookPreference> cmbBookPreference;
 
     @FXML
     private Button btnSearch;
@@ -120,6 +111,10 @@ public class ClientController {
 
         tabSearch.setDisable(true);
         tabMyBooks.setDisable(true);
+
+        cmbBookPreference.getItems().addAll(BookPreference.values());
+        cmbBookPreference.getSelectionModel().selectFirst();
+
 
         // add scroll pane to text Search Panel and wrap text in it
         ScrollPane scrollPane = new ScrollPane();
@@ -227,15 +222,15 @@ public class ClientController {
                 txaSearchPanel.setText("select a book to view it's description");
 
                 List<String> bookInfos = searchBooksResultsList.stream()
-                                                               .map(book -> {
-                                                                   try {
-                                                                       return book.printInfo();
-                                                                   } catch (RemoteException e) {
-                                                                       e.printStackTrace();
-                                                                   }
-                                                                   return null;
-                                                               })
-                                                               .collect(Collectors.toList());
+                        .map(book -> {
+                            try {
+                                return book.printInfo();
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                            return null;
+                        })
+                        .collect(Collectors.toList());
 
                 listViewSearchPanel.getItems().clear();
                 listViewSearchPanel.getItems().addAll(bookInfos);
@@ -288,8 +283,26 @@ public class ClientController {
     @FXML
     void btnAddBookClicked(ActionEvent event) {
 
+        int index = listViewSearchPanel.getSelectionModel().getSelectedIndex();
 
+        Book selectedBook = searchBooksResultsList.get(index);
 
+        BookPreference bookPreference = cmbBookPreference.getSelectionModel().getSelectedItem();
+
+        try {
+            boolean success = server.addUserBookPreference(username, selectedBook, bookPreference);
+
+            if (success) {
+                showAlertMessage(Alert.AlertType.CONFIRMATION, "Add Book to preferences", "Successfully " +
+                                                                                          "added book to preferences");
+            } else {
+                showAlertMessage(Alert.AlertType.ERROR, "Add Book to preferences", "Failed to add " +
+                                                                                   "add book to preferences");
+            }
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
     }
 

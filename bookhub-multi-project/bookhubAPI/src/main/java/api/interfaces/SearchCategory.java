@@ -10,4 +10,6 @@ public enum SearchCategory {
     SearchCategory(String text) {
         this.text = text;
     }
+
+
 }

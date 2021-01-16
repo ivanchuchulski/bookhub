@@ -1,7 +1,9 @@
 package database;
 
+import api.interfaces.Book;
 import api.interfaces.BookPreference;
 
+import java.rmi.RemoteException;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -141,26 +143,69 @@ public class DatabaseConnector {
         }
     }
 
-    public boolean addUserPreferenceBookToDB(String username, String title, BookPreference selectedCategory) {
+
+    private void addBookToDB(Book book) {
 
         try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
 
             System.out.println("Connecting to DB");
-            String sql = "INSERT INTO preferences (username, title, preferenceType) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO book (title, id, publisher, publishedDate, description, smallThumbnailLink) " +
+                         "VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE title = ?";
+
 
             PreparedStatement prep = connection.prepareStatement(sql);
-            prep.setString(1, username);
-            prep.setString(2, title);
-            prep.setString(3, String.valueOf(selectedCategory));
+            prep.setString(1, book.getTitle());
+            prep.setString(2, book.getId());
+            prep.setString(3, book.getPublisher());
+            prep.setString(4, book.getPublishedDate());
+            prep.setString(5, book.getDescription());
+            prep.setString(6, book.getSmallThumbnailLink());
 
-            boolean success = prep.execute();
+            prep.setString(7, book.getTitle());
+
+            prep.execute();
 
             prep.close();
 
-            return success;
+        } catch (SQLException | RemoteException e) {
+            e.printStackTrace();
+            //     return false;
+        }
 
 
-        } catch (SQLException e) {
+    }
+
+    public boolean addUserPreferenceBookToDB(String username, Book book, BookPreference selectedCategory) {
+
+        // TODO check if user wants to change preference for book
+
+        try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
+
+            System.out.println("Connecting to DB");
+
+            addBookToDB(book);
+
+            String sql = "INSERT INTO preferences (username, bookId, preferenceType) VALUES (?, ?, ?)";
+
+            PreparedStatement prep = connection.prepareStatement(sql);
+            prep.setString(1, username);
+            prep.setString(2, book.getId());
+
+
+            System.out.println(username);
+            System.out.println(book.getId());
+            System.out.println(selectedCategory.getText());
+
+            prep.setString(3, selectedCategory.getText());
+
+            prep.execute();
+
+
+            prep.close();
+
+            return true;
+
+        } catch (SQLException | RemoteException e) {
             e.printStackTrace();
             return false;
         }

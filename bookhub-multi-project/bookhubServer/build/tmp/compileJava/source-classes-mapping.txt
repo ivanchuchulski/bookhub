@@ -1,5 +1,5 @@
-database/DatabaseConnector.java
- database.DatabaseConnector
+implementations/BookImpl.java
+ implementations.BookImpl
 server/ServerController.java
  server.ServerController
 google/books/GoogleBooksAPI.java
@@ -11,11 +11,11 @@ dto/BookTransfer.java
  dto.BookTransfer
  dto.BookTransfer$VolumeInfo
  dto.BookTransfer$VolumeInfo$GoogleImages
-implementations/ServerObjectInterfaceImpl.java
- implementations.ServerObjectInterfaceImpl
-server/Server.java
- server.Server
-implementations/BookImpl.java
- implementations.BookImpl
 dto/Items.java
  dto.Items
+server/Server.java
+ server.Server
+implementations/ServerObjectInterfaceImpl.java
+ implementations.ServerObjectInterfaceImpl
+database/DatabaseConnector.java
+ database.DatabaseConnector

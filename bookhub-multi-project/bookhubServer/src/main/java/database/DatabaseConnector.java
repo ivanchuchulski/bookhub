@@ -13,22 +13,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DatabaseConnector {
-
     private static final String DB_URL = "jdbc:mysql://localhost/bookhub";
 
     private static final String USER = "root";
-    private static final String PASSWORD = null;
+    private static final String PASSWORD = "";
 
     public static void main(String[] args) {
         DatabaseConnector connector = new DatabaseConnector();
 
         connector.getBooksForUser("test");
-
     }
 
-
     public boolean loginUserInDB(String username, String password) {
-
         try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
 
             String checkUserRegisteredQuery = "SELECT * FROM users WHERE username = ? AND password = ?";
@@ -49,15 +45,11 @@ public class DatabaseConnector {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return false;
-
     }
 
     public boolean registerUserInDB(String username, String password) {
-
         try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
-
             String checkUserExistQuery = "SELECT * FROM users WHERE username = ?";
 
             PreparedStatement prep = connection.prepareStatement(checkUserExistQuery);
@@ -87,13 +79,11 @@ public class DatabaseConnector {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return false;
     }
 
 
     private User searchByUsername(String username) {
-
         User user = null;
 
         try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
@@ -126,7 +116,6 @@ public class DatabaseConnector {
     }
 
     private boolean addUserToDB(String username, String password) {
-
         try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
 
             System.out.println("Connecting to DB");
@@ -149,14 +138,13 @@ public class DatabaseConnector {
         }
     }
 
-
     private void addBookToDB(Book book) {
-
         try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
-
             System.out.println("Connecting to DB");
+
+            // when trying to insert the same book the primary key is the same, so ON DUBLICATE ... is not needed
             String sql = "INSERT INTO book (title, id, publisher, publishedDate, description, smallThumbnailLink) " +
-                         "VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE title = ?";
+                    "VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE title = ?";
 
 
             PreparedStatement prep = connection.prepareStatement(sql);
@@ -172,24 +160,20 @@ public class DatabaseConnector {
             prep.execute();
 
             prep.close();
-
         } catch (SQLException | RemoteException e) {
             e.printStackTrace();
         }
-
-
     }
 
     public Map<Book, BookPreference> getBooksForUser(String username) {
-
         Map<Book, BookPreference> userBooks = new HashMap<>();
 
         try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
-
             System.out.println("Connecting to DB");
+
             String sql = "SELECT book.title, book.id, book.publisher, book.publishedDate, book.description, " +
-                         "book.smallThumbnailLink, preferences.preferenceType FROM " +
-                         "book JOIN preferences ON book.id = preferences.bookId WHERE username = ?";
+                    "book.smallThumbnailLink, preferences.preferenceType FROM " +
+                    "book JOIN preferences ON book.id = preferences.bookId WHERE username = ?";
 
 
             PreparedStatement prep = connection.prepareStatement(sql);
@@ -199,7 +183,6 @@ public class DatabaseConnector {
             ResultSet resultSet = prep.executeQuery();
 
             while (resultSet.next()) {
-
                 String bookTitle = resultSet.getString("title");
                 String bookId = resultSet.getString("id");
                 String bookPublisher = resultSet.getString("publisher");
@@ -208,10 +191,11 @@ public class DatabaseConnector {
                 String bookSmallThumbnailLink = resultSet.getString("smallThumbnailLink");
 
                 String bookPreferenceString = String.join("_",
-                        resultSet.getString("preferenceType").toUpperCase().split("\\s+"));
+                                                          resultSet.getString("preferenceType").toUpperCase()
+                                                                   .split("\\s+"));
 
                 var book = new BookImpl(bookTitle, bookId, bookPublisher, bookPublishedDate,
-                        bookDescription, bookSmallThumbnailLink);
+                                        bookDescription, bookSmallThumbnailLink);
 
                 userBooks.put(book, BookPreference.valueOf(bookPreferenceString));
             }
@@ -220,31 +204,24 @@ public class DatabaseConnector {
             resultSet.close();
 
             return userBooks;
-
         } catch (SQLException | RemoteException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-
     public boolean addUserPreferenceBookToDB(String username, Book book, BookPreference selectedCategory) {
-
-        // TODO check if user wants to change preference for book
-
         try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
-
             System.out.println("Connecting to DB");
 
             addBookToDB(book);
 
             String sql = "INSERT INTO preferences (username, bookId, preferenceType) VALUES (?, ?, ?)" +
-                         "ON DUPLICATE KEY UPDATE preferenceType = ?";
+                    "ON DUPLICATE KEY UPDATE preferenceType = ?";
 
             PreparedStatement prep = connection.prepareStatement(sql);
             prep.setString(1, username);
             prep.setString(2, book.getId());
-
 
             System.out.println(username);
             System.out.println(book.getId());
@@ -255,22 +232,17 @@ public class DatabaseConnector {
 
             prep.execute();
 
-
             prep.close();
 
             return true;
-
         } catch (SQLException | RemoteException e) {
             e.printStackTrace();
             return false;
         }
-
     }
 
     public void removeBook(String username, String bookId) {
-
         try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
-
             System.out.println("Connecting to DB");
 
             String sql = "DELETE FROM preferences WHERE username = ? AND bookId = ?";
@@ -284,8 +256,5 @@ public class DatabaseConnector {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
-
-
 }

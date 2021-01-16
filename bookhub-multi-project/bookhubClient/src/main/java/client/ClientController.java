@@ -25,9 +25,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ClientController {
-
-    private ServerObjectInterface server;
     private Registry registry;
+    private ServerObjectInterface server;
+
     private List<Book> searchBooksResultsList;
 
     private Map<Book, BookPreference> userBookMap;
@@ -38,8 +38,7 @@ public class ClientController {
 
     private boolean searchFilter = false;
 
-    private List<Book> temporaryFilterBooks = new ArrayList<>();
-
+    private final List<Book> temporaryFilterBooks = new ArrayList<>();
 
     @FXML
     private TabPane tabPaneMenu;
@@ -148,265 +147,6 @@ public class ClientController {
 
 
     @FXML
-    void btnClearFilterClicked(ActionEvent event) {
-        clearMyBooksGUI();
-        searchFilter = false;
-        temporaryFilterBooks.clear();
-        txtSearchTitleMyBooks.clear();
-
-
-        ObservableList<String> myBooksObservableList = FXCollections.observableList(userBooksResultsList
-                .stream().map(e -> {
-                    try {
-                        return String.format("%s, %s", e.getTitle(), e.getPublishedDate());
-                    } catch (RemoteException remoteException) {
-                        remoteException.printStackTrace();
-                    }
-                    return null;
-                }).collect(Collectors.toList()));
-
-        listViewMyBooks.setItems(myBooksObservableList);
-    }
-
-
-    @FXML
-    void btnSearchMyBooksClicked(ActionEvent event) {
-        String title = txtSearchTitleMyBooks.getText().toLowerCase();
-
-        searchFilter = true;
-
-        BookPreference preference = cmbPreferencesMyBooks.getSelectionModel().getSelectedItem();
-
-        List<Book> books = new ArrayList<>();
-        temporaryFilterBooks.clear();
-
-        userBooksResultsList.stream()
-                .filter(e -> {
-                    try {
-                        return e.getTitle().toLowerCase().contains(title) && userBookMap.get(e).equals(preference);
-                    } catch (RemoteException remoteException) {
-                        remoteException.printStackTrace();
-                    }
-                    return false;
-                }).forEach(e -> {
-            books.add(e);
-            temporaryFilterBooks.add(e);
-        });
-
-        temporaryFilterBooks.forEach(e -> {
-            try {
-                System.out.println(e.printInfo());
-            } catch (RemoteException remoteException) {
-                remoteException.printStackTrace();
-            }
-        });
-
-
-        System.out.println(temporaryFilterBooks.size());
-
-        var observableList = getObservableList(books);
-        listViewMyBooks.setItems(observableList);
-    }
-
-
-    private ObservableList<String> getObservableList(List<Book> books) {
-
-        ObservableList<String> myBooksObservableList = FXCollections.observableList(books
-                .stream().map(e -> {
-                    try {
-                        return String.format("%s, %s", e.getTitle(), e.getPublishedDate());
-                    } catch (RemoteException remoteException) {
-                        remoteException.printStackTrace();
-                    }
-                    return null;
-                }).collect(Collectors.toList()));
-
-        return myBooksObservableList;
-    }
-
-    @FXML
-    void listViewMyBooksClicked(MouseEvent event) {
-        try {
-            if (listViewMyBooks.getSelectionModel().getSelectedItem() != null) {
-
-                int index = listViewMyBooks.getSelectionModel().getSelectedIndex();
-                String content = listViewMyBooks.getSelectionModel().getSelectedItem();
-
-
-                if (index == -1) {
-                    txaMyBooks.clear();
-                    txaMyBooks.setText("error");
-                    return;
-                }
-
-                Book selectedBook = null;
-
-                if (searchFilter) {
-                    for (Book book : temporaryFilterBooks) {
-                        if (String.format("%s, %s", book.getTitle(), book.getPublishedDate()).equals(content)) {
-                            selectedBook = book;
-                            break;
-                        }
-                    }
-
-                } else {
-                    selectedBook = (Book) userBookMap.keySet().toArray()[index];
-                }
-
-                txaMyBooks.clear();
-                txaMyBooks.setText(selectedBook.getDescription());
-
-                Image javafxImage = new Image(selectedBook.getSmallThumbnailLink());
-                imgViewMyBooks.setImage(javafxImage);
-            }
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void clearMyBooksGUI() {
-        cmbPreferencesMyBooks.getSelectionModel().select(-1);
-        txaMyBooks.clear();
-        imgViewMyBooks.setImage(null);
-        listViewMyBooks.getSelectionModel().select(-1);
-
-    }
-
-    private void clearTemporaryBooksList() {
-        searchFilter = false;
-        temporaryFilterBooks.clear();
-
-    }
-
-    @FXML
-    void btnFetchBooksClicked(ActionEvent event) {
-
-        try {
-
-            clearTemporaryBooksList();
-
-            userBookMap = server.getBooksForUser(username);
-
-            userBooksResultsList = new ArrayList(userBookMap.keySet());
-
-            ObservableList<String> myBooksObservableList = FXCollections.observableList(userBooksResultsList
-                    .stream().map(e -> {
-                        try {
-                            return String.format("%s, %s", e.getTitle(), e.getPublishedDate());
-                        } catch (RemoteException remoteException) {
-                            remoteException.printStackTrace();
-                        }
-                        return null;
-                    }).collect(Collectors.toList()));
-
-
-            clearMyBooksGUI();
-
-            listViewMyBooks.setItems(myBooksObservableList);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-
-
-        }
-
-
-    }
-
-
-    @FXML
-    void btnSetPreferenceMyBooksClicked(ActionEvent e) {
-
-
-    }
-
-    @FXML
-    void btnRemoveBookClicked(ActionEvent event) {
-
-        try {
-            if (listViewMyBooks.getSelectionModel().getSelectedItem() != null) {
-
-                int index = listViewMyBooks.getSelectionModel().getSelectedIndex();
-                String content = listViewMyBooks.getSelectionModel().getSelectedItem();
-
-                if (index == -1) {
-                    return;
-                }
-
-                Book selectedBook = null;
-
-                if (searchFilter) {
-                    for (Book book : temporaryFilterBooks) {
-                        if (String.format("%s, %s", book.getTitle(), book.getPublishedDate()).equals(content)) {
-                            selectedBook = book;
-                            break;
-                        }
-                    }
-                } else {
-                    selectedBook = (Book) userBookMap.keySet().toArray()[index];
-                }
-                server.removeBook(username, selectedBook.getId());
-
-                btnFetchBooksClicked(event);
-            }
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    private void wrapTextArea(TextArea textArea) {
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setContent(textArea);
-
-        textArea.setWrapText(true);
-    }
-
-
-    private void fillComboBox(ComboBox<BookPreference> comboBox) {
-        comboBox.getItems().addAll(BookPreference.values());
-        comboBox.getSelectionModel().selectFirst();
-    }
-
-    private void disableTabs() {
-        tabSearch.setDisable(true);
-        tabMyBooks.setDisable(true);
-    }
-
-    private void updateUserBooksByPreferenceGUI() {
-        int selectedIndex = cmbPreferencesMyBooks.getSelectionModel().getSelectedIndex();
-
-        if (selectedIndex == -1) {
-            return;
-        }
-
-        txaMyBooks.clear();
-        imgViewMyBooks.setImage(null);
-
-
-        BookPreference preference = BookPreference.values()[selectedIndex];
-
-        if (userBooksResultsList == null) {
-            return;
-        }
-
-        List<Book> booksForCategory;
-
-        if (searchFilter) {
-            booksForCategory = temporaryFilterBooks.stream()
-                    .filter(e -> userBookMap.get(e).equals(preference)).collect(Collectors.toList());
-
-        } else {
-            booksForCategory = userBooksResultsList.stream()
-                    .filter(e -> userBookMap.get(e).equals(preference)).collect(Collectors.toList());
-        }
-
-        ObservableList<String> observableList = getObservableList(booksForCategory);
-        listViewMyBooks.setItems(observableList);
-    }
-
-    @FXML
     void initialize() {
         cmbCategory.getItems().addAll(SearchCategory.values());
         cmbCategory.getSelectionModel().selectFirst();
@@ -502,17 +242,6 @@ public class ClientController {
     }
 
     @FXML
-    void btnQuitClicked(ActionEvent event) {
-        Platform.exit();
-    }
-
-    @FXML
-    void btnQuitMyBooksClicked(ActionEvent event) {
-        Platform.exit();
-    }
-
-
-    @FXML
     void btnSearchClicked(ActionEvent event) {
         try {
             String inputText = textSearch.getText();
@@ -531,15 +260,15 @@ public class ClientController {
                 txaSearchPanel.setText("select a book to view it's description");
 
                 List<String> bookInfos = searchBooksResultsList.stream()
-                        .map(book -> {
-                            try {
-                                return book.printInfo();
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                            }
-                            return null;
-                        })
-                        .collect(Collectors.toList());
+                                                               .map(book -> {
+                                                                   try {
+                                                                       return book.printInfo();
+                                                                   } catch (RemoteException e) {
+                                                                       e.printStackTrace();
+                                                                   }
+                                                                   return null;
+                                                               })
+                                                               .collect(Collectors.toList());
 
                 listViewSearchPanel.getItems().clear();
                 listViewSearchPanel.getItems().addAll(bookInfos);
@@ -555,7 +284,6 @@ public class ClientController {
     @FXML
     void listViewSearchPanelOnClick(MouseEvent event) throws RemoteException {
         if (listViewSearchPanel.getSelectionModel().getSelectedItem() != null) {
-
             int index = listViewSearchPanel.getSelectionModel().getSelectedIndex();
 
             if (index == -1) {
@@ -564,7 +292,7 @@ public class ClientController {
                 return;
             }
 
-            var book = searchBooksResultsList.get(index);
+            Book book = searchBooksResultsList.get(index);
 
             txaSearchPanel.clear();
             txaSearchPanel.setText(book.getDescription());
@@ -580,7 +308,6 @@ public class ClientController {
 
     @FXML
     void btnAddBookClicked(ActionEvent event) {
-
         int index = listViewSearchPanel.getSelectionModel().getSelectedIndex();
 
         Book selectedBook = searchBooksResultsList.get(index);
@@ -592,17 +319,198 @@ public class ClientController {
 
             if (success) {
                 showAlertMessage(Alert.AlertType.CONFIRMATION, "Add Book to preferences", "Successfully " +
-                                                                                          "added book to preferences");
+                        "added book to preferences");
             } else {
                 showAlertMessage(Alert.AlertType.ERROR, "Add Book to preferences", "Failed to add " +
-                                                                                   "add book to preferences");
+                        "add book to preferences");
             }
 
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    void btnQuitClicked(ActionEvent event) {
+        Platform.exit();
+    }
+
+    @FXML
+    void btnClearFilterClicked(ActionEvent event) {
+        clearMyBooksGUI();
+        searchFilter = false;
+        temporaryFilterBooks.clear();
+        txtSearchTitleMyBooks.clear();
+
+
+        ObservableList<String> myBooksObservableList = FXCollections.observableList(userBooksResultsList
+                                                                                            .stream().map(e -> {
+                    try {
+                        return String.format("%s, %s", e.getTitle(), e.getPublishedDate());
+                    } catch (RemoteException remoteException) {
+                        remoteException.printStackTrace();
+                    }
+                    return null;
+                }).collect(Collectors.toList()));
+
+        listViewMyBooks.setItems(myBooksObservableList);
+    }
+
+    @FXML
+    void btnSearchMyBooksClicked(ActionEvent event) {
+        String title = txtSearchTitleMyBooks.getText().toLowerCase();
+
+        searchFilter = true;
+
+        BookPreference preference = cmbPreferencesMyBooks.getSelectionModel().getSelectedItem();
+
+        List<Book> books = new ArrayList<>();
+        temporaryFilterBooks.clear();
+
+        userBooksResultsList.stream()
+                            .filter(e -> {
+                                try {
+                                    return e.getTitle().toLowerCase().contains(title) && userBookMap.get(e)
+                                                                                                    .equals(preference);
+                                } catch (RemoteException remoteException) {
+                                    remoteException.printStackTrace();
+                                }
+                                return false;
+                            }).forEach(e -> {
+            books.add(e);
+            temporaryFilterBooks.add(e);
+        });
+
+        temporaryFilterBooks.forEach(e -> {
+            try {
+                System.out.println(e.printInfo());
+            } catch (RemoteException remoteException) {
+                remoteException.printStackTrace();
+            }
+        });
+
+
+        System.out.println(temporaryFilterBooks.size());
+
+        var observableList = getObservableList(books);
+        listViewMyBooks.setItems(observableList);
+    }
+
+    @FXML
+    void listViewMyBooksClicked(MouseEvent event) {
+        try {
+            if (listViewMyBooks.getSelectionModel().getSelectedItem() != null) {
+
+                int index = listViewMyBooks.getSelectionModel().getSelectedIndex();
+                String content = listViewMyBooks.getSelectionModel().getSelectedItem();
+
+
+                if (index == -1) {
+                    txaMyBooks.clear();
+                    txaMyBooks.setText("error");
+                    return;
+                }
+
+                Book selectedBook = null;
+
+                if (searchFilter) {
+                    for (Book book : temporaryFilterBooks) {
+                        if (String.format("%s, %s", book.getTitle(), book.getPublishedDate()).equals(content)) {
+                            selectedBook = book;
+                            break;
+                        }
+                    }
+
+                } else {
+                    selectedBook = (Book) userBookMap.keySet().toArray()[index];
+                }
+
+                txaMyBooks.clear();
+                txaMyBooks.setText(selectedBook.getDescription());
+
+                Image javafxImage = new Image(selectedBook.getSmallThumbnailLink());
+                imgViewMyBooks.setImage(javafxImage);
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @FXML
+    void btnFetchBooksClicked(ActionEvent event) {
+
+        try {
+
+            clearTemporaryBooksList();
+
+            userBookMap = server.getBooksForUser(username);
+
+            userBooksResultsList = new ArrayList<>(userBookMap.keySet());
+
+            ObservableList<String> myBooksObservableList =
+                    FXCollections.observableList(userBooksResultsList.stream()
+                                                                     .map(e -> {
+                                                                         try {
+                                                                             return String
+                                                                                     .format("%s, %s", e.getTitle(), e
+                                                                                             .getPublishedDate());
+                                                                         } catch (RemoteException remoteException) {
+                                                                             remoteException.printStackTrace();
+                                                                         }
+                                                                         return null;
+                                                                     }).collect(Collectors.toList()));
+
+            clearMyBooksGUI();
+
+            listViewMyBooks.setItems(myBooksObservableList);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    void btnSetPreferenceMyBooksClicked(ActionEvent e) {
 
     }
+
+    @FXML
+    void btnRemoveBookClicked(ActionEvent event) {
+        try {
+            if (listViewMyBooks.getSelectionModel().getSelectedItem() != null) {
+                int index = listViewMyBooks.getSelectionModel().getSelectedIndex();
+                String content = listViewMyBooks.getSelectionModel().getSelectedItem();
+
+                if (index == -1) {
+                    return;
+                }
+
+                Book selectedBook = null;
+
+                if (searchFilter) {
+                    for (Book book : temporaryFilterBooks) {
+                        if (String.format("%s, %s", book.getTitle(), book.getPublishedDate()).equals(content)) {
+                            selectedBook = book;
+                            break;
+                        }
+                    }
+                } else {
+                    selectedBook = (Book) userBookMap.keySet().toArray()[index];
+                }
+                server.removeBook(username, selectedBook.getId());
+
+                btnFetchBooksClicked(event);
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    void btnQuitMyBooksClicked(ActionEvent event) {
+        Platform.exit();
+    }
+
 
     private void showAlertMessage(Alert.AlertType type, String header, String context) {
         Alert alert = new Alert(type);
@@ -610,5 +518,81 @@ public class ClientController {
         alert.setContentText(context);
 
         alert.showAndWait();
+    }
+
+    private ObservableList<String> getObservableList(List<Book> books) {
+        return FXCollections.observableList(books.stream().map(e -> {
+            try {
+                return String.format("%s, %s", e.getTitle(), e.getPublishedDate());
+            } catch (RemoteException remoteException) {
+                remoteException.printStackTrace();
+            }
+            return null;
+        }).collect(Collectors.toList()));
+    }
+
+    private void clearMyBooksGUI() {
+        cmbPreferencesMyBooks.getSelectionModel().select(-1);
+        txaMyBooks.clear();
+        imgViewMyBooks.setImage(null);
+        listViewMyBooks.getSelectionModel().select(-1);
+    }
+
+    private void clearTemporaryBooksList() {
+        searchFilter = false;
+        temporaryFilterBooks.clear();
+    }
+
+    private void fillComboBox(ComboBox<BookPreference> comboBox) {
+        comboBox.getItems().addAll(BookPreference.values());
+        comboBox.getSelectionModel().selectFirst();
+    }
+
+    private void disableTabs() {
+        tabSearch.setDisable(true);
+        tabMyBooks.setDisable(true);
+    }
+
+    private void updateUserBooksByPreferenceGUI() {
+        int selectedIndex = cmbPreferencesMyBooks.getSelectionModel().getSelectedIndex();
+
+        if (selectedIndex == -1) {
+            return;
+        }
+
+        txaMyBooks.clear();
+        imgViewMyBooks.setImage(null);
+
+        BookPreference preference = BookPreference.values()[selectedIndex];
+
+        if (userBooksResultsList == null) {
+            return;
+        }
+
+        List<Book> booksForCategory;
+
+        if (searchFilter) {
+            booksForCategory = temporaryFilterBooks.stream()
+                                                   .filter(e -> userBookMap.get(e).equals(preference))
+                                                   .collect(Collectors.toList());
+
+        } else {
+            booksForCategory = userBooksResultsList.stream()
+                                                   .filter(e -> userBookMap.get(e).equals(preference))
+                                                   .collect(Collectors.toList());
+        }
+
+        ObservableList<String> observableList = getObservableList(booksForCategory);
+
+        listViewMyBooks.setItems(observableList);
+    }
+
+    private void wrapTextArea(TextArea textArea) {
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setContent(textArea);
+
+        textArea.setWrapText(true);
     }
 }

@@ -17,8 +17,9 @@ public class Client extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource("client.fxml"));
         Scene scene = new Scene(root);
+
         stage.setResizable(false);
-        stage.setTitle("Server control panel");
+        stage.setTitle("client");
         stage.setScene(scene);
         stage.setOnCloseRequest( event-> {
             Platform.exit();

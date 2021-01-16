@@ -119,6 +119,14 @@ public class ClientController {
         tabSearch.setDisable(true);
         tabMyBooks.setDisable(true);
 
+        // add scroll pane to text Search Panel and wrap text in it
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setContent(txaSearchPanel);
+
+        txaSearchPanel.setWrapText(true);
+
         try {
             registry = LocateRegistry.getRegistry(7777);
             server = (ServerObjectInterface) registry.lookup("interface");

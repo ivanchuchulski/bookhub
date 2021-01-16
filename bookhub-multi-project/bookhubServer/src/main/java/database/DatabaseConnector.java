@@ -185,7 +185,8 @@ public class DatabaseConnector {
 
             addBookToDB(book);
 
-            String sql = "INSERT INTO preferences (username, bookId, preferenceType) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO preferences (username, bookId, preferenceType) VALUES (?, ?, ?)" +
+                         "ON DUPLICATE KEY UPDATE preferenceType = ?";
 
             PreparedStatement prep = connection.prepareStatement(sql);
             prep.setString(1, username);
@@ -197,6 +198,7 @@ public class DatabaseConnector {
             System.out.println(selectedCategory.getText());
 
             prep.setString(3, selectedCategory.getText());
+            prep.setString(4, selectedCategory.getText());
 
             prep.execute();
 

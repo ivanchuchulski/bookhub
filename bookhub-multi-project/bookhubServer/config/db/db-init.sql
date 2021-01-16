@@ -25,10 +25,9 @@ CREATE TABLE `book`
 
 CREATE TABLE `preferences`
 (
-    `preferenceId`   INT(11)      NOT NULL AUTO_INCREMENT,
     `username`       VARCHAR(255) NOT NULL,
     `bookId`         VARCHAR(255) NOT NULL,
     `preferenceType` ENUM ('Favourite', 'Want to read', 'Have read', 'Currently reading') NOT NULL,
-    PRIMARY KEY (`preferenceId`)
+     CONSTRAINT PK_Preferences PRIMARY KEY (`username`, `bookID`)
 );
 

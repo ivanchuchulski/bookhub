@@ -1,8 +1,8 @@
-api/interfaces/BookPreference.java
- api.interfaces.BookPreference
-api/interfaces/Book.java
- api.interfaces.Book
 api/interfaces/SearchCategory.java
  api.interfaces.SearchCategory
+api/interfaces/Book.java
+ api.interfaces.Book
+api/interfaces/BookStatus.java
+ api.interfaces.BookStatus
 api/interfaces/ServerObjectInterface.java
  api.interfaces.ServerObjectInterface

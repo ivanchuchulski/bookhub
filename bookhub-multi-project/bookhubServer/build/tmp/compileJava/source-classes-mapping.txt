@@ -7,15 +7,15 @@ dto/Items.java
 google/books/GoogleBooksAPI.java
  google.books.GoogleBooksAPI
  google.books.GoogleBooksAPI$1
-server/Server.java
- server.Server
+database/User.java
+ database.User
 implementations/BookImpl.java
  implementations.BookImpl
 server/ServerController.java
  server.ServerController
-database/User.java
- database.User
 implementations/ServerObjectInterfaceImpl.java
  implementations.ServerObjectInterfaceImpl
+server/Server.java
+ server.Server
 database/DatabaseConnector.java
  database.DatabaseConnector

@@ -1,7 +1,7 @@
 package database;
 
 import api.interfaces.Book;
-import api.interfaces.BookPreference;
+import api.interfaces.BookStatus;
 import implementations.BookImpl;
 
 import java.rmi.RemoteException;
@@ -165,8 +165,8 @@ public class DatabaseConnector {
         }
     }
 
-    public Map<Book, BookPreference> getBooksForUser(String username) {
-        Map<Book, BookPreference> userBooks = new HashMap<>();
+    public Map<Book, BookStatus> getBooksForUser(String username) {
+        Map<Book, BookStatus> userBooks = new HashMap<>();
 
         try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
             System.out.println("Connecting to DB");
@@ -197,7 +197,7 @@ public class DatabaseConnector {
                 var book = new BookImpl(bookTitle, bookId, bookPublisher, bookPublishedDate,
                                         bookDescription, bookSmallThumbnailLink);
 
-                userBooks.put(book, BookPreference.valueOf(bookPreferenceString));
+                userBooks.put(book, BookStatus.valueOf(bookPreferenceString));
             }
 
             prep.close();
@@ -210,7 +210,7 @@ public class DatabaseConnector {
         }
     }
 
-    public boolean addUserPreferenceBookToDB(String username, Book book, BookPreference selectedCategory) {
+    public boolean addUserPreferenceBookToDB(String username, Book book, BookStatus selectedCategory) {
         try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
             System.out.println("Connecting to DB");
 

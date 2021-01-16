@@ -2,7 +2,7 @@ package implementations;
 
 
 import api.interfaces.Book;
-import api.interfaces.BookPreference;
+import api.interfaces.BookStatus;
 import api.interfaces.SearchCategory;
 import api.interfaces.ServerObjectInterface;
 import database.DatabaseConnector;
@@ -67,12 +67,12 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
     }
 
     @Override
-    public boolean addUserBookPreference(String username, Book book, BookPreference bookPreference) throws RemoteException {
-        return databaseConnector.addUserPreferenceBookToDB(username, book, bookPreference);
+    public boolean addUserBookPreference(String username, Book book, BookStatus bookStatus) throws RemoteException {
+        return databaseConnector.addUserPreferenceBookToDB(username, book, bookStatus);
     }
 
     @Override
-    public Map<Book, BookPreference> getBooksForUser(String username) throws RemoteException {
+    public Map<Book, BookStatus> getBooksForUser(String username) throws RemoteException {
         return databaseConnector.getBooksForUser(username);
     }
 

@@ -13,9 +13,9 @@ public interface ServerObjectInterface extends Remote {
 
     List<Book> getBookByType(SearchCategory category, String argument) throws RemoteException;
 
-    boolean addUserBookPreference(String username, Book book, BookPreference bookPreference) throws RemoteException;
+    boolean addUserBookPreference(String username, Book book, BookStatus bookStatus) throws RemoteException;
 
-    Map<Book, BookPreference> getBooksForUser(String username) throws RemoteException;
+    Map<Book, BookStatus> getBooksForUser(String username) throws RemoteException;
 
     void removeBook(String username, String bookId) throws RemoteException;
 }

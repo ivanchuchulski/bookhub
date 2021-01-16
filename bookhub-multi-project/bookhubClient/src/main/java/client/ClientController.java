@@ -1,7 +1,7 @@
 package client;
 
 import api.interfaces.Book;
-import api.interfaces.BookPreference;
+import api.interfaces.BookStatus;
 import api.interfaces.SearchCategory;
 import api.interfaces.ServerObjectInterface;
 import javafx.application.Platform;
@@ -30,7 +30,7 @@ public class ClientController {
 
     private List<Book> searchBooksResultsList;
 
-    private Map<Book, BookPreference> userBookMap;
+    private Map<Book, BookStatus> userBookMap;
 
     private List<Book> userBooksResultsList;
 
@@ -92,7 +92,7 @@ public class ClientController {
     private Label lblSearch;
 
     @FXML
-    private ComboBox<BookPreference> cmbBookPreference;
+    private ComboBox<BookStatus> cmbBookStatus;
 
     @FXML
     private Button btnSearch;
@@ -101,7 +101,7 @@ public class ClientController {
     private TextArea txaSearchPanel;
 
     @FXML
-    private ImageView imageViewSearchPane;
+    private ImageView imgViewSearchPane;
 
     @FXML
     private ScrollPane scrPaneMyBooks;
@@ -116,13 +116,13 @@ public class ClientController {
     private Button btnSearchMyBooks;
 
     @FXML
-    private ComboBox<BookPreference> cmbPreferencesMyBooks;
+    private ComboBox<BookStatus> cmbStatusMyBooks;
 
     @FXML
     private ImageView imgViewMyBooks;
 
     @FXML
-    private Button btnSetPreferenceMyBooks;
+    private Button btnSetStatusMyBooks;
 
     @FXML
     private ListView<String> listViewMyBooks;
@@ -145,25 +145,24 @@ public class ClientController {
     @FXML
     private Button btnQuitMyBooks;
 
+    @FXML
+    private ComboBox<BookStatus> cmbNewStatus;
 
     @FXML
     void initialize() {
         cmbCategory.getItems().addAll(SearchCategory.values());
         cmbCategory.getSelectionModel().selectFirst();
 
-        fillComboBox(cmbBookPreference);
-//        fillComboBox(cmbPreferencesMyBooks);
-
-        cmbPreferencesMyBooks.getItems().addAll(BookPreference.values());
-        cmbPreferencesMyBooks.getSelectionModel().select(-1);
+        fillComboBox(cmbBookStatus);
+        fillComboBox(cmbStatusMyBooks);
+        fillComboBox(cmbNewStatus);
 
         disableTabs();
 
         wrapTextArea(txaSearchPanel);
         wrapTextArea(txaMyBooks);
 
-
-        cmbPreferencesMyBooks.setOnAction((event) -> {
+        cmbStatusMyBooks.setOnAction((event) -> {
             updateUserBooksByPreferenceGUI();
         });
 
@@ -254,7 +253,7 @@ public class ClientController {
             // clear the list
             listViewSearchPanel.getItems().clear();
             txaSearchPanel.clear();
-            imageViewSearchPane.setImage(null);
+            imgViewSearchPane.setImage(null);
 
             if (searchBooksResultsList != null) {
                 txaSearchPanel.setText("select a book to view it's description");
@@ -299,7 +298,7 @@ public class ClientController {
 
             try {
                 Image javafxImage = new Image(book.getSmallThumbnailLink());
-                imageViewSearchPane.setImage(javafxImage);
+                imgViewSearchPane.setImage(javafxImage);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -312,13 +311,13 @@ public class ClientController {
 
         Book selectedBook = searchBooksResultsList.get(index);
 
-        BookPreference bookPreference = cmbBookPreference.getSelectionModel().getSelectedItem();
+        BookStatus bookStatus = cmbBookStatus.getSelectionModel().getSelectedItem();
 
         try {
-            boolean success = server.addUserBookPreference(username, selectedBook, bookPreference);
+            boolean success = server.addUserBookPreference(username, selectedBook, bookStatus);
 
             if (success) {
-                showAlertMessage(Alert.AlertType.CONFIRMATION, "Add Book to preferences", "Successfully " +
+                showAlertMessage(Alert.AlertType.INFORMATION, "Add Book to preferences", "Successfully " +
                         "added book to preferences");
             } else {
                 showAlertMessage(Alert.AlertType.ERROR, "Add Book to preferences", "Failed to add " +
@@ -362,7 +361,7 @@ public class ClientController {
 
         searchFilter = true;
 
-        BookPreference preference = cmbPreferencesMyBooks.getSelectionModel().getSelectedItem();
+        BookStatus preference = cmbStatusMyBooks.getSelectionModel().getSelectedItem();
 
         List<Book> books = new ArrayList<>();
         temporaryFilterBooks.clear();
@@ -470,7 +469,7 @@ public class ClientController {
     }
 
     @FXML
-    void btnSetPreferenceMyBooksClicked(ActionEvent e) {
+    void btnSetStatusMyBooksClicked(ActionEvent event) {
 
     }
 
@@ -532,7 +531,7 @@ public class ClientController {
     }
 
     private void clearMyBooksGUI() {
-        cmbPreferencesMyBooks.getSelectionModel().select(-1);
+        cmbStatusMyBooks.getSelectionModel().select(-1);
         txaMyBooks.clear();
         imgViewMyBooks.setImage(null);
         listViewMyBooks.getSelectionModel().select(-1);
@@ -543,9 +542,9 @@ public class ClientController {
         temporaryFilterBooks.clear();
     }
 
-    private void fillComboBox(ComboBox<BookPreference> comboBox) {
-        comboBox.getItems().addAll(BookPreference.values());
-        comboBox.getSelectionModel().selectFirst();
+    private void fillComboBox(ComboBox<BookStatus> comboBox) {
+        comboBox.getItems().addAll(BookStatus.values());
+        comboBox.getSelectionModel().select(-1);
     }
 
     private void disableTabs() {
@@ -554,7 +553,7 @@ public class ClientController {
     }
 
     private void updateUserBooksByPreferenceGUI() {
-        int selectedIndex = cmbPreferencesMyBooks.getSelectionModel().getSelectedIndex();
+        int selectedIndex = cmbStatusMyBooks.getSelectionModel().getSelectedIndex();
 
         if (selectedIndex == -1) {
             return;
@@ -563,7 +562,7 @@ public class ClientController {
         txaMyBooks.clear();
         imgViewMyBooks.setImage(null);
 
-        BookPreference preference = BookPreference.values()[selectedIndex];
+        BookStatus preference = BookStatus.values()[selectedIndex];
 
         if (userBooksResultsList == null) {
             return;

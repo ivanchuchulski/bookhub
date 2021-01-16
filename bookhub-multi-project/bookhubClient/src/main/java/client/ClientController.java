@@ -19,7 +19,9 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ClientController {
@@ -28,7 +30,10 @@ public class ClientController {
     private Registry registry;
     private List<Book> searchBooksResultsList;
 
-    private ObservableList<Book> searchBooksResult;
+    private Map<Book, BookPreference> userBookMap;
+
+    private List<Book> userBooksResultsList;
+
 
     private String username;
 
@@ -105,6 +110,53 @@ public class ClientController {
     private Tab tabMyBooks;
 
     @FXML
+    private Button btnSearchMyBooks;
+
+    @FXML
+    private ComboBox<BookPreference> cmbPreferencesMyBooks;
+
+    @FXML
+    private ImageView imgViewMyBooks;
+
+    @FXML
+    private Button btnSetPreferenceMyBooks;
+
+    @FXML
+    private ListView<String> listViewMyBooks;
+
+
+    @FXML
+    private Button btnFetchBooks;
+
+    @FXML
+    void btnFetchBooksClicked(ActionEvent event) {
+
+        try {
+
+            userBookMap = server.getBooksForUser(username);
+
+            userBooksResultsList = new ArrayList(userBookMap.keySet());
+
+            ObservableList<String> myBooksObservableList = FXCollections.observableList(userBooksResultsList
+            .stream().map(String::valueOf).collect(Collectors.toList()));
+
+            listViewMyBooks.setItems(myBooksObservableList);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+
+
+        }
+
+
+    }
+
+
+    @FXML
+    void btnSetPreferenceMyBooksClicked(ActionEvent e) {
+
+    }
+
+    @FXML
     void initialize() {
         cmbCategory.getItems().addAll(SearchCategory.values());
         cmbCategory.getSelectionModel().selectFirst();
@@ -114,6 +166,10 @@ public class ClientController {
 
         cmbBookPreference.getItems().addAll(BookPreference.values());
         cmbBookPreference.getSelectionModel().selectFirst();
+
+        cmbPreferencesMyBooks.getItems().addAll(BookPreference.values());
+        cmbPreferencesMyBooks.getSelectionModel().selectFirst();
+
 
 
         // add scroll pane to text Search Panel and wrap text in it

@@ -3,6 +3,7 @@ package api.interfaces;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
 
 public interface ServerObjectInterface extends Remote {
 
@@ -13,4 +14,6 @@ public interface ServerObjectInterface extends Remote {
     List<Book> getBookByType(SearchCategory category, String argument) throws RemoteException;
 
     boolean addUserBookPreference(String username, Book book, BookPreference bookPreference) throws RemoteException;
+
+    Map<Book, BookPreference> getBooksForUser(String username) throws RemoteException;
 }

@@ -2,12 +2,15 @@ package database;
 
 import api.interfaces.Book;
 import api.interfaces.BookPreference;
+import implementations.BookImpl;
 
 import java.rmi.RemoteException;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DatabaseConnector {
 
@@ -18,6 +21,9 @@ public class DatabaseConnector {
 
     public static void main(String[] args) {
         DatabaseConnector connector = new DatabaseConnector();
+
+        connector.getBooksForUser("test");
+
     }
 
 
@@ -174,6 +180,58 @@ public class DatabaseConnector {
 
 
     }
+
+    public Map<Book, BookPreference> getBooksForUser(String username) {
+
+        Map<Book, BookPreference> userBooks = new HashMap<>();
+
+        try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
+
+            System.out.println("Connecting to DB");
+            String sql = "SELECT book.title, book.id, book.publisher, book.publishedDate, book.description, " +
+                         "book.smallThumbnailLink, preferences.preferenceType FROM " +
+                         "book JOIN preferences ON book.id = preferences.bookId WHERE username = ?";
+
+
+            PreparedStatement prep = connection.prepareStatement(sql);
+
+            prep.setString(1, username);
+
+            ResultSet resultSet = prep.executeQuery();
+
+            while (resultSet.next()) {
+
+                String bookTitle = resultSet.getString("title");
+                String bookId = resultSet.getString("id");
+                String bookPublisher = resultSet.getString("publisher");
+                String bookPublishedDate = resultSet.getString("publishedDate");
+                String bookDescription = resultSet.getString("description");
+                String bookSmallThumbnailLink = resultSet.getString("smallThumbnailLink");
+
+                String bookPreferenceString = String.join("_",
+                                resultSet.getString("preferenceType").toUpperCase().split("\\s+"));
+
+//                BookPreference bookPreference = BookPreference.valueOf(resultSet.getString("preferenceType"));
+
+                System.out.println(bookPreferenceString);
+
+                var book = new BookImpl(bookTitle, bookId, bookPublisher, bookPublishedDate,
+                        bookDescription, bookSmallThumbnailLink);
+
+                userBooks.put(book, BookPreference.valueOf(bookPreferenceString));
+            }
+
+            prep.close();
+            resultSet.close();
+
+            return userBooks;
+
+        } catch (SQLException | RemoteException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
     public boolean addUserPreferenceBookToDB(String username, Book book, BookPreference selectedCategory) {
 

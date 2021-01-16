@@ -14,6 +14,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements ServerObjectInterface {
@@ -51,7 +52,7 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
                     String imageLink = volumeInfo.getImageLinks() == null ?
                             notFoundImage : volumeInfo.getImageLinks().getSmallThumbnail();
 
-                    result.add(new BookImpl(item.getId(),volumeInfo.getTitle(), volumeInfo.getAuthors(), volumeInfo.getPublisher(),
+                    result.add(new BookImpl(item.getId(), volumeInfo.getTitle(), volumeInfo.getAuthors(), volumeInfo.getPublisher(),
                             volumeInfo.getPublishedDate(), volumeInfo.getDescription(),
                             imageLink));
                 }
@@ -68,5 +69,10 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
     @Override
     public boolean addUserBookPreference(String username, Book book, BookPreference bookPreference) throws RemoteException {
         return databaseConnector.addUserPreferenceBookToDB(username, book, bookPreference);
+    }
+
+    @Override
+    public Map<Book, BookPreference> getBooksForUser(String username) throws RemoteException {
+        return databaseConnector.getBooksForUser(username);
     }
 }

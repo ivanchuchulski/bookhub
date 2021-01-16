@@ -11,5 +11,8 @@ public enum SearchCategory {
         this.text = text;
     }
 
-
+    @Override
+    public String toString() {
+        return text;
+    }
 }

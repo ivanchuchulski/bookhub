@@ -9,6 +9,8 @@ import java.util.List;
 
 // this object is used for sending to the client
 public class BookImpl extends UnicastRemoteObject implements Book {
+
+    private final String id;
     private final String title;
     // this could become just a single String for one author
     private final String[] authors;
@@ -17,9 +19,10 @@ public class BookImpl extends UnicastRemoteObject implements Book {
     private final String description;
     private final String smallThumbnailLink;
 
-    public BookImpl(String title, String[] authors, String publisher, String publishedDate, String description,
+    public BookImpl(String id ,String title, String[] authors, String publisher, String publishedDate, String description,
                     String smallThumbnailLink) throws RemoteException {
         super();
+        this.id = id;
         this.title = title;
         this.authors = authors;
         this.publisher = publisher;
@@ -28,15 +31,21 @@ public class BookImpl extends UnicastRemoteObject implements Book {
         this.smallThumbnailLink = smallThumbnailLink;
     }
 
-    public BookImpl(String title, String publisher, String publishedDate, String description,
+    public BookImpl(String id, String title, String publisher, String publishedDate, String description,
                     String smallThumbnailLink) throws RemoteException {
         super();
+        this.id = id;
         this.title = title;
         this.publisher = publisher;
         this.authors = null;
         this.publishedDate = publishedDate;
         this.description = description;
         this.smallThumbnailLink = smallThumbnailLink;
+    }
+
+    @Override
+    public String getId() throws RemoteException {
+        return id;
     }
 
     @Override

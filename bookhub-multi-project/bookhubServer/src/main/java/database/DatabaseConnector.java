@@ -1,5 +1,7 @@
 package database;
 
+import api.interfaces.BookPreference;
+
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -138,5 +140,32 @@ public class DatabaseConnector {
             return false;
         }
     }
+
+    public boolean addUserPreferenceBookToDB(String username, String title, BookPreference selectedCategory) {
+
+        try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
+
+            System.out.println("Connecting to DB");
+            String sql = "INSERT INTO preferences (username, title, preferenceType) VALUES (?, ?, ?)";
+
+            PreparedStatement prep = connection.prepareStatement(sql);
+            prep.setString(1, username);
+            prep.setString(2, title);
+            prep.setString(3, String.valueOf(selectedCategory));
+
+            boolean success = prep.execute();
+
+            prep.close();
+
+            return success;
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
 
 }

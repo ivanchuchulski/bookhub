@@ -5,6 +5,9 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface Book extends Remote {
+
+    String getId() throws RemoteException;
+
     String getTitle() throws RemoteException;
 
     String[] getAuthors() throws RemoteException;

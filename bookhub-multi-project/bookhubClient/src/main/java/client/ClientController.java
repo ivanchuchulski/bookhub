@@ -39,6 +39,8 @@ public class ClientController {
 
     private ObservableList<Book> searchBooksResult;
 
+    private String username;
+
     @FXML
     private TabPane tabPaneMenu;
 
@@ -85,7 +87,7 @@ public class ClientController {
     private Label lblCategory;
 
     @FXML
-    private Button btnAdd;
+    private Button btnAddBook;
 
     @FXML
     private Label lblSearch;
@@ -155,6 +157,8 @@ public class ClientController {
         try {
             boolean loggedIn = server.login(username, password);
 
+            this.username = txtUsername.getText();
+
             txtUsername.setText("");
             txtPassword.setText("");
 
@@ -166,6 +170,7 @@ public class ClientController {
 
                 tabLogin.setDisable(true);
                 tabPaneMenu.getTabs().remove(0);
+
 
                 showAlertMessage(Alert.AlertType.INFORMATION, "Login", "Login successful!");
             } else {
@@ -281,7 +286,10 @@ public class ClientController {
     }
 
     @FXML
-    void btnAddBook(ActionEvent event) {
+    void btnAddBookClicked(ActionEvent event) {
+
+
+
 
     }
 

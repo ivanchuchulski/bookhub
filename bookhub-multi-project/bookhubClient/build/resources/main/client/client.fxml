@@ -77,7 +77,7 @@
                                         <ComboBox fx:id="cmbCategory" layoutX="385.0" layoutY="55.0" prefHeight="26.0" prefWidth="218.0" />
                                         <Label fx:id="lblCategory" alignment="CENTER" contentDisplay="CENTER" layoutX="382.0" layoutY="20.0" prefHeight="18.0" prefWidth="224.0" text="Category" textAlignment="CENTER" />
                                         <ListView fx:id="listViewSearchPanel" layoutX="28.0" layoutY="110.0" onMouseClicked="#listViewSearchPanelOnClick" prefHeight="275.0" prefWidth="335.0" />
-                                        <Button fx:id="btnAdd" layoutX="527.0" layoutY="437.0" mnemonicParsing="false" onAction="#btnAddBook" prefHeight="34.0" prefWidth="102.0" text="Add Book" />
+                                        <Button fx:id="btnAddBook" layoutX="527.0" layoutY="437.0" mnemonicParsing="false" onAction="#btnAddBookClicked" prefHeight="34.0" prefWidth="102.0" text="Add Book" />
                                         <Label fx:id="lblSearch" alignment="CENTER" contentDisplay="CENTER" layoutX="26.0" layoutY="20.0" prefHeight="18.0" prefWidth="338.0" text="Search" textAlignment="CENTER" />
                                         <ComboBox fx:id="cmbAction" layoutX="485.0" layoutY="398.0" prefHeight="26.0" prefWidth="218.0" />
                                         <Button fx:id="btnSearch" layoutX="224.0" layoutY="396.0" mnemonicParsing="false" onAction="#btnSearchClicked" prefHeight="35.0" prefWidth="139.0" text="Search" />

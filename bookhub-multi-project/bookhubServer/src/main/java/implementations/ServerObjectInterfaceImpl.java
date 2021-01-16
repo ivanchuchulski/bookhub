@@ -2,6 +2,7 @@ package implementations;
 
 
 import api.interfaces.Book;
+import api.interfaces.BookPreference;
 import api.interfaces.SearchCategory;
 import api.interfaces.ServerObjectInterface;
 import database.DatabaseConnector;
@@ -50,7 +51,7 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
                     String imageLink = volumeInfo.getImageLinks() == null ?
                             notFoundImage : volumeInfo.getImageLinks().getSmallThumbnail();
 
-                    result.add(new BookImpl(volumeInfo.getTitle(), volumeInfo.getAuthors(), volumeInfo.getPublisher(),
+                    result.add(new BookImpl(item.getId(),volumeInfo.getTitle(), volumeInfo.getAuthors(), volumeInfo.getPublisher(),
                             volumeInfo.getPublishedDate(), volumeInfo.getDescription(),
                             imageLink));
                 }
@@ -62,5 +63,10 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
         }
 
         return null;
+    }
+
+    @Override
+    public boolean addUserBookPreference(String username, String title, BookPreference bookPreference) throws RemoteException {
+        return databaseConnector.addUserPreferenceBookToDB(username, title, bookPreference);
     }
 }

@@ -6,11 +6,16 @@ import java.util.Arrays;
 
 // this object is used for receiving response from Google books
 public class BookTransfer implements Serializable {
+
+    private final String id;
     private final VolumeInfo volumeInfo;
 
-    public BookTransfer(VolumeInfo volumeInfo) {
+    public BookTransfer(String id, VolumeInfo volumeInfo) {
+        this.id = id;
         this.volumeInfo = volumeInfo;
     }
+
+
 
     public String getImageURL() {
         return volumeInfo.imageLinks.smallThumbnail;
@@ -20,13 +25,17 @@ public class BookTransfer implements Serializable {
         return volumeInfo.toString();
     }
 
+    public String getId() {
+        return id;
+    }
+
     public VolumeInfo getVolumeInfo() {
         return volumeInfo;
     }
 
     @Override
     public String toString() {
-        return volumeInfo.toString();
+        return id + ":" + volumeInfo.toString();
     }
 
     public class VolumeInfo implements Serializable {

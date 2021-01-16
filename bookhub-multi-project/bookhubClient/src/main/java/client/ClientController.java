@@ -193,28 +193,40 @@ public class ClientController {
 
     }
 
+
+    private void wrapTextArea(TextArea textArea) {
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setContent(textArea);
+
+        textArea.setWrapText(true);
+    }
+
+
+    private void fillComboBox(ComboBox<BookPreference> comboBox) {
+        comboBox.getItems().addAll(BookPreference.values());
+        comboBox.getSelectionModel().selectFirst();
+    }
+
+    private void disableTabs() {
+        tabSearch.setDisable(true);
+        tabMyBooks.setDisable(true);
+    }
+
     @FXML
     void initialize() {
         cmbCategory.getItems().addAll(SearchCategory.values());
         cmbCategory.getSelectionModel().selectFirst();
 
-        tabSearch.setDisable(true);
-        tabMyBooks.setDisable(true);
+        fillComboBox(cmbBookPreference);
+        fillComboBox(cmbPreferencesMyBooks);
 
-        cmbBookPreference.getItems().addAll(BookPreference.values());
-        cmbBookPreference.getSelectionModel().selectFirst();
+        disableTabs();
 
-        cmbPreferencesMyBooks.getItems().addAll(BookPreference.values());
-        cmbPreferencesMyBooks.getSelectionModel().selectFirst();
+        wrapTextArea(txaSearchPanel);
+        wrapTextArea(txaMyBooks);
 
-
-        // add scroll pane to text Search Panel and wrap text in it
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setContent(txaSearchPanel);
-
-        txaSearchPanel.setWrapText(true);
 
         try {
             registry = LocateRegistry.getRegistry(7777);
@@ -338,7 +350,7 @@ public class ClientController {
     @FXML
     void listViewSearchPanelOnClick(MouseEvent event) throws RemoteException {
         if (listViewSearchPanel.getSelectionModel().getSelectedItem() != null) {
-            
+
             int index = listViewSearchPanel.getSelectionModel().getSelectedIndex();
 
             if (index == -1) {

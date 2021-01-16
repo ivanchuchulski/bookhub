@@ -132,6 +132,21 @@ public class ClientController {
     private TextArea txaMyBooks;
 
 
+    private ObservableList<String> getObservableList(List<Book> books) {
+
+        ObservableList<String> myBooksObservableList = FXCollections.observableList(books
+                .stream().map(e -> {
+                    try {
+                        return String.format("%s", e.getTitle());
+                    } catch (RemoteException remoteException) {
+                        remoteException.printStackTrace();
+                    }
+                    return null;
+                }).collect(Collectors.toList()));
+
+        return myBooksObservableList;
+    }
+
     @FXML
     void listViewMyBooksClicked(MouseEvent event) {
         try {
@@ -157,6 +172,13 @@ public class ClientController {
         }
     }
 
+    private void clearMyBooksGUI() {
+        cmbPreferencesMyBooks.getSelectionModel().select(-1);
+        txaMyBooks.clear();
+        imgViewMyBooks.setImage(null);
+        listViewMyBooks.getSelectionModel().select(-1);
+
+    }
 
     @FXML
     void btnFetchBooksClicked(ActionEvent event) {
@@ -176,6 +198,9 @@ public class ClientController {
                         }
                         return null;
                     }).collect(Collectors.toList()));
+
+
+            clearMyBooksGUI();
 
             listViewMyBooks.setItems(myBooksObservableList);
         } catch (RemoteException e) {
@@ -214,19 +239,45 @@ public class ClientController {
         tabMyBooks.setDisable(true);
     }
 
+    private void updateUserBooksByPreferenceGUI() {
+        int selectedIndex = cmbPreferencesMyBooks.getSelectionModel().getSelectedIndex();
+
+        if (selectedIndex == -1) {
+            return;
+        }
+
+        BookPreference preference = BookPreference.values()[selectedIndex];
+
+        if (userBooksResultsList == null) {
+            return;
+        }
+
+        var booksForCategory = userBooksResultsList.stream()
+                .filter(e -> userBookMap.get(e).equals(preference)).collect(Collectors.toList());
+        ObservableList<String> observableList = getObservableList(booksForCategory);
+        listViewMyBooks.setItems(observableList);
+    }
+
     @FXML
     void initialize() {
         cmbCategory.getItems().addAll(SearchCategory.values());
         cmbCategory.getSelectionModel().selectFirst();
 
         fillComboBox(cmbBookPreference);
-        fillComboBox(cmbPreferencesMyBooks);
+//        fillComboBox(cmbPreferencesMyBooks);
+
+        cmbPreferencesMyBooks.getItems().addAll(BookPreference.values());
+        cmbPreferencesMyBooks.getSelectionModel().select(-1);
 
         disableTabs();
 
         wrapTextArea(txaSearchPanel);
         wrapTextArea(txaMyBooks);
 
+
+        cmbPreferencesMyBooks.setOnAction((event) -> {
+            updateUserBooksByPreferenceGUI();
+        });
 
         try {
             registry = LocateRegistry.getRegistry(7777);

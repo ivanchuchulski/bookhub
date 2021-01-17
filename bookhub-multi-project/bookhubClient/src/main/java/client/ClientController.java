@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -29,9 +30,9 @@ public class ClientController {
     private final List<Book> temporaryFilterBooks = new ArrayList<>();
     private Registry registry;
     private ServerObjectInterface server;
-    private List<Book> searchBooksResultsList;
-    private Map<Book, BookStatus> userBookMap;
-    private List<Book> userBooksResultsList;
+    private List<Book> searchBooksResultsList = new ArrayList<>();
+    private Map<Book, BookStatus> userBookMap = new HashMap<>();
+    private List<Book> userBooksResultsList = new ArrayList<>();
     private String username;
     private boolean searchFilter = false;
     @FXML
@@ -347,6 +348,7 @@ public class ClientController {
                 }).collect(Collectors.toList()));
 
         listViewMyBooks.setItems(myBooksObservableList);
+
     }
 
     @FXML
@@ -356,7 +358,7 @@ public class ClientController {
         searchFilter = true;
 
         int preferenceIndex = cmbStatusMyBooks.getSelectionModel().getSelectedIndex();
-        
+
         temporaryFilterBooks.clear();
 
         Predicate<Book> filter;
@@ -413,7 +415,6 @@ public class ClientController {
 
         return books;
     }
-
 
     @FXML
     void listViewMyBooksClicked(MouseEvent event) {

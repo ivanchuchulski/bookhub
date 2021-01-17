@@ -6,10 +6,9 @@ USE `bookhub`;
 
 CREATE TABLE `users`
 (
-    `id`       INT(11)      NOT NULL AUTO_INCREMENT,
     `username` VARCHAR(255) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`username`)
 );
 
 CREATE TABLE `book`
@@ -18,16 +17,23 @@ CREATE TABLE `book`
     `id`                 VARCHAR(255) NOT NULL,
     `publisher`          VARCHAR(255) NOT NULL,
     `publishedDate`      VARCHAR(255) NOT NULL,
-    `description`        TEXT NOT NULL,
+    `description`        TEXT         NOT NULL,
     `smallThumbnailLink` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`)
 );
 
 CREATE TABLE `preferences`
 (
-    `username`       VARCHAR(255) NOT NULL,
-    `bookId`         VARCHAR(255) NOT NULL,
+    `username`       VARCHAR(255)                                                         NOT NULL,
+    `bookId`         VARCHAR(255)                                                         NOT NULL,
     `preferenceType` ENUM ('Favourite', 'Want to read', 'Have read', 'Currently reading') NOT NULL,
-     CONSTRAINT PK_Preferences PRIMARY KEY (`username`, `bookID`)
+    CONSTRAINT pk_preferences PRIMARY KEY (`username`, `bookID`),
+    CONSTRAINT `preference_fk_username` FOREIGN KEY (`username`) REFERENCES `users` (`username`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `preference_fk_book` FOREIGN KEY (`bookId`) REFERENCES `book` (`id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+
 );
 

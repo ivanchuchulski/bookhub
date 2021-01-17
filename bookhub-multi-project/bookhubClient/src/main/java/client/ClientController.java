@@ -492,12 +492,6 @@ public class ClientController {
     @FXML
     void btnSetStatusMyBooksClicked(ActionEvent event) throws RemoteException {
 
-        int bookStatusIndex = cmbNewStatus.getSelectionModel().getSelectedIndex();
-
-        if (bookStatusIndex == -1) {
-            return;
-        }
-
         if (searchFilter) {
 
             if (listViewMyBooks.getSelectionModel().getSelectedItem() != null) {

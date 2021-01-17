@@ -143,23 +143,13 @@ public class ClientController {
     @FXML
     private ComboBox<BookStatus> cmbNewStatus;
 
+
     @FXML
     void initialize() {
-        cmbCategory.getItems().addAll(SearchCategory.values());
-        cmbCategory.getSelectionModel().selectFirst();
 
-        fillComboBox(cmbBookStatus);
-        fillComboBox(cmbStatusMyBooks);
-        fillComboBox(cmbNewStatus);
-
-        disableTabs();
-
-        wrapTextArea(txaSearchPanel);
-        wrapTextArea(txaMyBooks);
-
-        cmbStatusMyBooks.setOnAction((event) -> {
-            updateUserBooksByPreferenceGUI();
-        });
+        setupGUI();
+        fillSearchCategory();
+        setupElementsListeners();
 
         try {
             registry = LocateRegistry.getRegistry(7777);
@@ -179,6 +169,30 @@ public class ClientController {
             Platform.exit();
             System.exit(0);
         }
+    }
+
+    private void setupElementsListeners() {
+        cmbStatusMyBooks.valueProperty().addListener(l -> btnSearchMyBooksClicked(new ActionEvent()));
+
+        tabMyBooks.selectedProperty().addListener(l -> btnFetchBooksClicked(new ActionEvent()));
+
+        cmbStatusMyBooks.setOnAction((event) -> updateUserBooksByPreferenceGUI());
+    }
+
+    private void setupGUI() {
+        fillComboBox(cmbBookStatus);
+        fillComboBox(cmbStatusMyBooks);
+        fillComboBox(cmbNewStatus);
+
+        disableTabs();
+
+        wrapTextArea(txaSearchPanel);
+        wrapTextArea(txaMyBooks);
+    }
+
+    private void fillSearchCategory() {
+        cmbCategory.getItems().addAll(SearchCategory.values());
+        cmbCategory.getSelectionModel().selectFirst();
     }
 
     @FXML

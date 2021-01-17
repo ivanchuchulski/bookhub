@@ -22,24 +22,18 @@ import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ClientController {
+    private final List<Book> temporaryFilterBooks = new ArrayList<>();
     private Registry registry;
     private ServerObjectInterface server;
-
     private List<Book> searchBooksResultsList;
-
     private Map<Book, BookStatus> userBookMap;
-
     private List<Book> userBooksResultsList;
-
     private String username;
-
     private boolean searchFilter = false;
-
-    private final List<Book> temporaryFilterBooks = new ArrayList<>();
-
     @FXML
     private TabPane tabPaneMenu;
 
@@ -259,15 +253,15 @@ public class ClientController {
                 txaSearchPanel.setText("select a book to view it's description");
 
                 List<String> bookInfos = searchBooksResultsList.stream()
-                                                               .map(book -> {
-                                                                   try {
-                                                                       return book.printInfo();
-                                                                   } catch (RemoteException e) {
-                                                                       e.printStackTrace();
-                                                                   }
-                                                                   return null;
-                                                               })
-                                                               .collect(Collectors.toList());
+                        .map(book -> {
+                            try {
+                                return book.printInfo();
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                            return null;
+                        })
+                        .collect(Collectors.toList());
 
                 listViewSearchPanel.getItems().clear();
                 listViewSearchPanel.getItems().addAll(bookInfos);
@@ -318,10 +312,10 @@ public class ClientController {
 
             if (success) {
                 showAlertMessage(Alert.AlertType.INFORMATION, "Add Book to preferences", "Successfully " +
-                        "added book to preferences");
+                                                                                         "added book to preferences");
             } else {
                 showAlertMessage(Alert.AlertType.ERROR, "Add Book to preferences", "Failed to add " +
-                        "add book to preferences");
+                                                                                   "add book to preferences");
             }
 
         } catch (RemoteException e) {
@@ -343,7 +337,7 @@ public class ClientController {
 
 
         ObservableList<String> myBooksObservableList = FXCollections.observableList(userBooksResultsList
-                                                                                            .stream().map(e -> {
+                .stream().map(e -> {
                     try {
                         return String.format("%s, %s", e.getTitle(), e.getPublishedDate());
                     } catch (RemoteException remoteException) {
@@ -361,25 +355,37 @@ public class ClientController {
 
         searchFilter = true;
 
-        BookStatus preference = cmbStatusMyBooks.getSelectionModel().getSelectedItem();
-
-        List<Book> books = new ArrayList<>();
+        int preferenceIndex = cmbStatusMyBooks.getSelectionModel().getSelectedIndex();
+        
         temporaryFilterBooks.clear();
 
-        userBooksResultsList.stream()
-                            .filter(e -> {
-                                try {
-                                    return e.getTitle().toLowerCase().contains(title) && userBookMap.get(e)
-                                                                                                    .equals(preference);
-                                } catch (RemoteException remoteException) {
-                                    remoteException.printStackTrace();
-                                }
-                                return false;
-                            }).forEach(e -> {
-            books.add(e);
-            temporaryFilterBooks.add(e);
-        });
+        Predicate<Book> filter;
 
+        if (preferenceIndex == -1) {
+
+            filter = e -> {
+                try {
+                    return e.getTitle().toLowerCase().contains(title);
+                } catch (RemoteException remoteException) {
+                    remoteException.printStackTrace();
+                }
+                return false;
+            };
+        } else {
+            BookStatus preference = cmbStatusMyBooks.getSelectionModel().getSelectedItem();
+
+            filter = e -> {
+                try {
+                    return e.getTitle().toLowerCase().contains(title) && userBookMap.get(e)
+                            .equals(preference);
+                } catch (RemoteException remoteException) {
+                    remoteException.printStackTrace();
+                }
+                return false;
+            };
+        }
+
+        List<Book> books = filterUserBooks(filter);
         temporaryFilterBooks.forEach(e -> {
             try {
                 System.out.println(e.printInfo());
@@ -394,6 +400,20 @@ public class ClientController {
         var observableList = getObservableList(books);
         listViewMyBooks.setItems(observableList);
     }
+
+    private List<Book> filterUserBooks(Predicate<Book> p) {
+        List<Book> books = new ArrayList<>();
+
+        userBooksResultsList.stream()
+                .filter(p)
+                .forEach(e -> {
+                    books.add(e);
+                    temporaryFilterBooks.add(e);
+                });
+
+        return books;
+    }
+
 
     @FXML
     void listViewMyBooksClicked(MouseEvent event) {
@@ -449,16 +469,16 @@ public class ClientController {
 
             ObservableList<String> myBooksObservableList =
                     FXCollections.observableList(userBooksResultsList.stream()
-                                                                     .map(e -> {
-                                                                         try {
-                                                                             return String
-                                                                                     .format("%s, %s", e.getTitle(), e
-                                                                                             .getPublishedDate());
-                                                                         } catch (RemoteException remoteException) {
-                                                                             remoteException.printStackTrace();
-                                                                         }
-                                                                         return null;
-                                                                     }).collect(Collectors.toList()));
+                            .map(e -> {
+                                try {
+                                    return String
+                                            .format("%s, %s", e.getTitle(), e
+                                                    .getPublishedDate());
+                                } catch (RemoteException remoteException) {
+                                    remoteException.printStackTrace();
+                                }
+                                return null;
+                            }).collect(Collectors.toList()));
 
             clearMyBooksGUI();
 
@@ -572,13 +592,13 @@ public class ClientController {
 
         if (searchFilter) {
             booksForCategory = temporaryFilterBooks.stream()
-                                                   .filter(e -> userBookMap.get(e).equals(preference))
-                                                   .collect(Collectors.toList());
+                    .filter(e -> userBookMap.get(e).equals(preference))
+                    .collect(Collectors.toList());
 
         } else {
             booksForCategory = userBooksResultsList.stream()
-                                                   .filter(e -> userBookMap.get(e).equals(preference))
-                                                   .collect(Collectors.toList());
+                    .filter(e -> userBookMap.get(e).equals(preference))
+                    .collect(Collectors.toList());
         }
 
         ObservableList<String> observableList = getObservableList(booksForCategory);

@@ -490,8 +490,54 @@ public class ClientController {
     }
 
     @FXML
-    void btnSetStatusMyBooksClicked(ActionEvent event) {
+    void btnSetStatusMyBooksClicked(ActionEvent event) throws RemoteException {
 
+        int bookStatusIndex = cmbNewStatus.getSelectionModel().getSelectedIndex();
+
+        if (bookStatusIndex == -1) {
+            return;
+        }
+
+        if (searchFilter) {
+
+            if (listViewMyBooks.getSelectionModel().getSelectedItem() != null) {
+                int selectedBookIndex = listViewMyBooks.getSelectionModel().getSelectedIndex();
+                String content = listViewMyBooks.getSelectionModel().getSelectedItem();
+
+                // no book selected
+                if (selectedBookIndex == -1) {
+                    return;
+                }
+
+                int selectedStatusIndex = cmbNewStatus.getSelectionModel().getSelectedIndex();
+
+                // no status selected
+                if (selectedStatusIndex == -1) {
+                    return;
+                }
+
+                BookStatus bookStatus = cmbNewStatus.getSelectionModel().getSelectedItem();
+
+                Book selectedBook = null;
+
+                if (searchFilter) {
+                    for (Book book : temporaryFilterBooks) {
+                        if (String.format("%s, %s", book.getTitle(), book.getPublishedDate()).equals(content)) {
+                            selectedBook = book;
+                            break;
+                        }
+                    }
+                } else {
+                    selectedBook = (Book) userBookMap.keySet().toArray()[selectedBookIndex];
+                }
+                server.addUserBookPreference(username, selectedBook, bookStatus);
+
+                showAlertMessage(Alert.AlertType.INFORMATION, "Change book status", "Book status changed" +
+                                                                                    " successfully");
+                btnFetchBooksClicked(event);
+
+            }
+        }
     }
 
     @FXML

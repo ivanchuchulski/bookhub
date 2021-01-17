@@ -144,7 +144,7 @@ public class DatabaseConnector {
 
             // when trying to insert the same book the primary key is the same, so ON DUBLICATE ... is not needed
             String sql = "INSERT INTO book (title, id, publisher, publishedDate, description, smallThumbnailLink) " +
-                    "VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE title = ?";
+                         "VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE title = ?";
 
 
             PreparedStatement prep = connection.prepareStatement(sql);
@@ -172,8 +172,8 @@ public class DatabaseConnector {
             System.out.println("Connecting to DB");
 
             String sql = "SELECT book.title, book.id, book.publisher, book.publishedDate, book.description, " +
-                    "book.smallThumbnailLink, preferences.preferenceType FROM " +
-                    "book JOIN preferences ON book.id = preferences.bookId WHERE username = ?";
+                         "book.smallThumbnailLink, preferences.preferenceType FROM " +
+                         "book JOIN preferences ON book.id = preferences.bookId WHERE username = ?";
 
 
             PreparedStatement prep = connection.prepareStatement(sql);
@@ -191,11 +191,11 @@ public class DatabaseConnector {
                 String bookSmallThumbnailLink = resultSet.getString("smallThumbnailLink");
 
                 String bookPreferenceString = String.join("_",
-                                                          resultSet.getString("preferenceType").toUpperCase()
-                                                                   .split("\\s+"));
+                        resultSet.getString("preferenceType").toUpperCase()
+                                .split("\\s+"));
 
                 var book = new BookImpl(bookTitle, bookId, bookPublisher, bookPublishedDate,
-                                        bookDescription, bookSmallThumbnailLink);
+                        bookDescription, bookSmallThumbnailLink);
 
                 userBooks.put(book, BookStatus.valueOf(bookPreferenceString));
             }
@@ -217,7 +217,7 @@ public class DatabaseConnector {
             addBookToDB(book);
 
             String sql = "INSERT INTO preferences (username, bookId, preferenceType) VALUES (?, ?, ?)" +
-                    "ON DUPLICATE KEY UPDATE preferenceType = ?";
+                         "ON DUPLICATE KEY UPDATE preferenceType = ?";
 
             PreparedStatement prep = connection.prepareStatement(sql);
             prep.setString(1, username);
@@ -257,4 +257,5 @@ public class DatabaseConnector {
             e.printStackTrace();
         }
     }
+
 }

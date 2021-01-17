@@ -95,7 +95,7 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <ComboBox fx:id="cmbStatusMyBooks" layoutX="125.0" layoutY="74.0" onAction="#cmbStatusMyBooksClicked" prefHeight="35.0" prefWidth="242.0" />
+                                <ComboBox fx:id="cmbStatusMyBooks" layoutX="125.0" layoutY="74.0" prefHeight="35.0" prefWidth="242.0" />
                                 <Button fx:id="btnRemoveBook" layoutX="634.0" layoutY="434.0" mnemonicParsing="false" onAction="#btnRemoveBookClicked" prefHeight="35.0" prefWidth="200.0" text="Remove Book" />
                                 <Button fx:id="btnQuitMyBooks" layoutX="634.0" layoutY="489.0" mnemonicParsing="false" onAction="#btnQuitMyBooksClicked" prefHeight="35.0" prefWidth="200.0" text="Quit" />
                                 <Label layoutX="459.0" layoutY="92.0" text="Description" />

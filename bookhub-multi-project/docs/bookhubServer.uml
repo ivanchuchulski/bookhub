@@ -3,81 +3,81 @@
   <ID>Gradle</ID>
   <OriginalElement>bookhub-multi-project/bookhubServer</OriginalElement>
   <nodes>
-    <node x="88.75" y="290.0">bookhub-multi-project/bookhubServer</node>
-    <node x="369.25" y="210.0">bookhubAPI</node>
-    <node x="299.25" y="210.0">com.google.code.gson:gson:2.8.6</node>
-    <node x="151.25" y="210.0">org.mariadb.jdbc:mariadb-java-client:2.1.2</node>
-    <node x="10.5" y="140.0">org.openjfx:javafx-controls:14</node>
-    <node x="43.90178571428574" y="70.0">org.openjfx:javafx-graphics:14</node>
-    <node x="10.276785714285737" y="0.0">org.openjfx:javafx-base:14</node>
-    <node x="46.25" y="210.0">org.openjfx:javafx-fxml:14</node>
+    <node x="193.00000000000003" y="290.0">bookhub-multi-project/bookhubServer</node>
+    <node x="0.0" y="210.0">bookhubAPI</node>
+    <node x="111.00000000000003" y="210.0">com.google.code.gson:gson:2.8.6</node>
+    <node x="181.00000000000003" y="210.0">org.mariadb.jdbc:mariadb-java-client:2.1.2</node>
+    <node x="345.75" y="140.0">org.openjfx:javafx-controls:14</node>
+    <node x="375.75" y="70.0">org.openjfx:javafx-graphics:14</node>
+    <node x="224.47321428571433" y="0.0">org.openjfx:javafx-base:14</node>
+    <node x="329.0" y="210.0">org.openjfx:javafx-fxml:14</node>
   </nodes>
   <notes />
   <edges>
     <edge source="bookhub-multi-project/bookhubServer" target="org.openjfx:javafx-controls:14">
-      <point x="-29.714285714285722" y="-10.0" />
-      <point x="111.03571428571428" y="260.0" />
-      <point x="35.75" y="260.0" />
-      <point x="-25.75" y="10.0" />
+      <point x="29.714285714285722" y="-10.0" />
+      <point x="274.7142857142858" y="260.0" />
+      <point x="423.5" y="260.0" />
+      <point x="25.75" y="10.0" />
     </edge>
     <edge source="org.openjfx:javafx-controls:14" target="org.openjfx:javafx-graphics:14">
       <point x="0.0" y="-10.0" />
-      <point x="62.0" y="115.0" />
-      <point x="70.15178571428574" y="115.0" />
+      <point x="397.25" y="115.0" />
+      <point x="402.0" y="115.0" />
       <point x="-26.25" y="10.0" />
     </edge>
     <edge source="bookhub-multi-project/bookhubServer" target="org.openjfx:javafx-fxml:14">
-      <point x="-14.857142857142833" y="-10.0" />
-      <point x="125.89285714285717" y="250.0" />
-      <point x="88.25" y="250.0" />
+      <point x="14.857142857142861" y="-10.0" />
+      <point x="259.8571428571429" y="250.0" />
+      <point x="371.0" y="250.0" />
       <point x="0.0" y="10.0" />
     </edge>
     <edge source="bookhub-multi-project/bookhubServer" target="org.openjfx:javafx-graphics:14">
-      <point x="0.0" y="-10.0" />
-      <point x="140.75" y="115.0" />
-      <point x="122.65178571428574" y="115.0" />
+      <point x="44.57142857142857" y="-10.0" />
+      <point x="289.5714285714286" y="270.0" />
+      <point x="459.25" y="270.0" />
+      <point x="459.25" y="115.0" />
+      <point x="454.5" y="115.0" />
       <point x="26.25" y="10.0" />
     </edge>
     <edge source="org.openjfx:javafx-graphics:14" target="org.openjfx:javafx-base:14">
       <point x="0.0" y="-10.0" />
-      <point x="96.40178571428574" y="45.0" />
-      <point x="73.27678571428574" y="45.0" />
+      <point x="428.25" y="45.0" />
+      <point x="287.47321428571433" y="45.0" />
       <point x="21.0" y="10.0" />
     </edge>
     <edge source="bookhub-multi-project/bookhubServer" target="bookhubAPI">
-      <point x="44.571428571428555" y="-10.0" />
-      <point x="185.32142857142856" y="270.0" />
-      <point x="414.25" y="270.0" />
+      <point x="-44.57142857142857" y="-10.0" />
+      <point x="200.42857142857144" y="270.0" />
+      <point x="45.0" y="270.0" />
       <point x="0.0" y="10.0" />
     </edge>
     <edge source="bookhub-multi-project/bookhubServer" target="org.mariadb.jdbc:mariadb-java-client:2.1.2">
-      <point x="14.857142857142861" y="-10.0" />
-      <point x="155.60714285714286" y="250.0" />
-      <point x="215.25" y="250.0" />
+      <point x="7.105427357601002E-15" y="-10.0" />
       <point x="0.0" y="10.0" />
     </edge>
     <edge source="org.openjfx:javafx-fxml:14" target="org.openjfx:javafx-controls:14">
       <point x="0.0" y="-10.0" />
-      <point x="25.75" y="10.0" />
+      <point x="-25.75" y="10.0" />
     </edge>
     <edge source="bookhub-multi-project/bookhubServer" target="org.openjfx:javafx-base:14">
-      <point x="-44.571428571428555" y="-10.0" />
-      <point x="96.17857142857144" y="270.0" />
-      <point x="0.0" y="270.0" />
-      <point x="0.0" y="45.0" />
-      <point x="31.276785714285737" y="45.0" />
+      <point x="-29.714285714285708" y="-10.0" />
+      <point x="215.28571428571433" y="260.0" />
+      <point x="100.50000000000003" y="260.0" />
+      <point x="100.50000000000003" y="45.0" />
+      <point x="245.47321428571433" y="45.0" />
       <point x="-21.0" y="10.0" />
     </edge>
     <edge source="bookhub-multi-project/bookhubServer" target="com.google.code.gson:gson:2.8.6">
-      <point x="29.714285714285722" y="-10.0" />
-      <point x="170.46428571428572" y="260.0" />
-      <point x="324.25" y="260.0" />
+      <point x="-14.857142857142847" y="-10.0" />
+      <point x="230.14285714285717" y="250.0" />
+      <point x="136.00000000000003" y="250.0" />
       <point x="0.0" y="10.0" />
     </edge>
   </edges>
-  <settings layout="Hierarchic Group" zoom="1.0" x="234.5" y="280.0" />
+  <settings layout="Hierarchic Group" zoom="1.4000000000000001" x="226.8449883449885" y="233.15384615384616" />
   <SelectedNodes>
-    <node>bookhubAPI</node>
+    <node>bookhub-multi-project/bookhubServer</node>
   </SelectedNodes>
   <Categories />
   <VISIBILITY>all</VISIBILITY>

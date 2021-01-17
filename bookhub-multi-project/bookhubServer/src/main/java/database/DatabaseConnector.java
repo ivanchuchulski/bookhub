@@ -1,7 +1,7 @@
 package database;
 
 import api.interfaces.Book;
-import api.interfaces.BookStatus;
+import api.enums.BookStatus;
 import implementations.BookImpl;
 
 import java.rmi.RemoteException;

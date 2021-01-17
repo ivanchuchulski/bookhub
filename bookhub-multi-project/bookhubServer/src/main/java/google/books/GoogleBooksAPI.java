@@ -1,6 +1,6 @@
 package google.books;
 
-import api.interfaces.SearchCategory;
+import api.enums.SearchCategory;
 import com.google.gson.Gson;
 import dto.Items;
 

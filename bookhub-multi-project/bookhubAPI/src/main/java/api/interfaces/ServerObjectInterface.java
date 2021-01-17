@@ -1,5 +1,8 @@
 package api.interfaces;
 
+import api.enums.BookStatus;
+import api.enums.SearchCategory;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;

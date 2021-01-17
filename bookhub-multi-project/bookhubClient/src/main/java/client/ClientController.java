@@ -1,8 +1,8 @@
 package client;
 
 import api.interfaces.Book;
-import api.interfaces.BookStatus;
-import api.interfaces.SearchCategory;
+import api.enums.BookStatus;
+import api.enums.SearchCategory;
 import api.interfaces.ServerObjectInterface;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;

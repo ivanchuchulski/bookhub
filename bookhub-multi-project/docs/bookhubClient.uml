@@ -3,25 +3,25 @@
   <ID>Gradle</ID>
   <OriginalElement>bookhub-multi-project/bookhubClient</OriginalElement>
   <nodes>
-    <node x="36.75" y="280.0">bookhub-multi-project/bookhubClient</node>
-    <node x="151.25" y="210.0">bookhubAPI</node>
-    <node x="10.5" y="140.0">org.openjfx:javafx-controls:14</node>
-    <node x="47.822916666666664" y="70.0">org.openjfx:javafx-graphics:14</node>
-    <node x="14.197916666666664" y="0.0">org.openjfx:javafx-base:14</node>
-    <node x="46.25" y="210.0">org.openjfx:javafx-fxml:14</node>
+    <node x="101.5" y="280.0">bookhub-multi-project/bookhubClient</node>
+    <node x="0.0" y="210.0">bookhubAPI</node>
+    <node x="127.75" y="140.0">org.openjfx:javafx-controls:14</node>
+    <node x="157.75" y="70.0">org.openjfx:javafx-graphics:14</node>
+    <node x="116.80208333333334" y="0.0">org.openjfx:javafx-base:14</node>
+    <node x="111.0" y="210.0">org.openjfx:javafx-fxml:14</node>
   </nodes>
   <notes />
   <edges>
     <edge source="bookhub-multi-project/bookhubClient" target="org.openjfx:javafx-controls:14">
-      <point x="-20.599999999999994" y="-10.0" />
-      <point x="67.65" y="250.0" />
-      <point x="35.75" y="250.0" />
-      <point x="-25.75" y="10.0" />
+      <point x="20.599999999999994" y="-10.0" />
+      <point x="173.6" y="250.0" />
+      <point x="205.5" y="250.0" />
+      <point x="25.75" y="10.0" />
     </edge>
     <edge source="org.openjfx:javafx-controls:14" target="org.openjfx:javafx-graphics:14">
       <point x="0.0" y="-10.0" />
-      <point x="62.0" y="115.0" />
-      <point x="74.07291666666666" y="115.0" />
+      <point x="179.25" y="115.0" />
+      <point x="184.0" y="115.0" />
       <point x="-26.25" y="10.0" />
     </edge>
     <edge source="bookhub-multi-project/bookhubClient" target="org.openjfx:javafx-fxml:14">
@@ -30,39 +30,41 @@
     </edge>
     <edge source="org.openjfx:javafx-graphics:14" target="org.openjfx:javafx-base:14">
       <point x="0.0" y="-10.0" />
-      <point x="100.32291666666666" y="45.0" />
-      <point x="77.19791666666666" y="45.0" />
+      <point x="210.25" y="45.0" />
+      <point x="179.80208333333334" y="45.0" />
       <point x="21.0" y="10.0" />
     </edge>
     <edge source="bookhub-multi-project/bookhubClient" target="org.openjfx:javafx-graphics:14">
-      <point x="20.599999999999994" y="-10.0" />
-      <point x="108.85" y="250.0" />
-      <point x="140.75" y="250.0" />
-      <point x="140.75" y="115.0" />
-      <point x="126.57291666666666" y="115.0" />
-      <point x="26.25" y="10.0" />
+      <point x="41.2" y="-10.0" />
+      <point x="194.20000000000002" y="260.0" />
+      <point x="241.25" y="260.0" />
+      <point x="241.25" y="115.0" />
+      <point x="236.5" y="115.0" />
+      <point x="26.249999999999993" y="10.0" />
     </edge>
     <edge source="bookhub-multi-project/bookhubClient" target="bookhubAPI">
-      <point x="41.2" y="-10.0" />
-      <point x="129.45" y="260.0" />
-      <point x="196.25" y="260.0" />
+      <point x="-41.19999999999999" y="-10.0" />
+      <point x="111.80000000000001" y="260.0" />
+      <point x="45.0" y="260.0" />
       <point x="0.0" y="10.0" />
+    </edge>
+    <edge source="bookhub-multi-project/bookhubClient" target="org.openjfx:javafx-base:14">
+      <point x="-20.599999999999994" y="-10.0" />
+      <point x="132.4" y="250.0" />
+      <point x="100.5" y="250.0" />
+      <point x="100.5" y="45.0" />
+      <point x="137.80208333333334" y="45.0" />
+      <point x="-21.0" y="10.0" />
     </edge>
     <edge source="org.openjfx:javafx-fxml:14" target="org.openjfx:javafx-controls:14">
       <point x="0.0" y="-10.0" />
-      <point x="25.75" y="10.0" />
-    </edge>
-    <edge source="bookhub-multi-project/bookhubClient" target="org.openjfx:javafx-base:14">
-      <point x="-41.19999999999999" y="-10.0" />
-      <point x="47.05000000000001" y="260.0" />
-      <point x="0.0" y="260.0" />
-      <point x="0.0" y="45.0" />
-      <point x="35.197916666666664" y="45.0" />
-      <point x="-21.0" y="10.0" />
+      <point x="-25.75" y="10.0" />
     </edge>
   </edges>
-  <settings layout="Hierarchic Group" zoom="1.0" x="195.19230769230774" y="157.76923076923072" />
-  <SelectedNodes />
+  <settings layout="Hierarchic Group" zoom="1.5" x="152.13536463536457" y="83.33333333333331" />
+  <SelectedNodes>
+    <node>bookhub-multi-project/bookhubClient</node>
+  </SelectedNodes>
   <Categories />
   <VISIBILITY>all</VISIBILITY>
 </Diagram>

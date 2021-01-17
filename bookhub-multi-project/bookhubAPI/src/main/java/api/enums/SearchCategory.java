@@ -1,4 +1,4 @@
-package api.interfaces;
+package api.enums;
 
 public enum SearchCategory {
     TITLE("Title"),

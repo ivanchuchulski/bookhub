@@ -20,9 +20,6 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
-               "username='" + username + '\'' +
-               ", password='" + password + '\'' +
-               '}';
+        return String.format("Username: [%s] Password: [%s]%n", username, password);
     }
 }

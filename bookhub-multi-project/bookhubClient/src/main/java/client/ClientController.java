@@ -143,23 +143,13 @@ public class ClientController {
     @FXML
     private ComboBox<BookStatus> cmbNewStatus;
 
+
     @FXML
     void initialize() {
-        cmbCategory.getItems().addAll(SearchCategory.values());
-        cmbCategory.getSelectionModel().selectFirst();
 
-        fillComboBox(cmbBookStatus);
-        fillComboBox(cmbStatusMyBooks);
-        fillComboBox(cmbNewStatus);
-
-        disableTabs();
-
-        wrapTextArea(txaSearchPanel);
-        wrapTextArea(txaMyBooks);
-
-        cmbStatusMyBooks.setOnAction((event) -> {
-            updateUserBooksByPreferenceGUI();
-        });
+        setupGUI();
+        fillSearchCategory();
+        setupElementsListeners();
 
         try {
             registry = LocateRegistry.getRegistry(7777);
@@ -179,6 +169,30 @@ public class ClientController {
             Platform.exit();
             System.exit(0);
         }
+    }
+
+    private void setupElementsListeners() {
+        cmbStatusMyBooks.valueProperty().addListener(l -> btnSearchMyBooksClicked(new ActionEvent()));
+
+        tabMyBooks.selectedProperty().addListener(l -> btnFetchBooksClicked(new ActionEvent()));
+
+        cmbStatusMyBooks.setOnAction((event) -> updateUserBooksByPreferenceGUI());
+    }
+
+    private void setupGUI() {
+        fillComboBox(cmbBookStatus);
+        fillComboBox(cmbStatusMyBooks);
+        fillComboBox(cmbNewStatus);
+
+        disableTabs();
+
+        wrapTextArea(txaSearchPanel);
+        wrapTextArea(txaMyBooks);
+    }
+
+    private void fillSearchCategory() {
+        cmbCategory.getItems().addAll(SearchCategory.values());
+        cmbCategory.getSelectionModel().selectFirst();
     }
 
     @FXML
@@ -490,8 +504,48 @@ public class ClientController {
     }
 
     @FXML
-    void btnSetStatusMyBooksClicked(ActionEvent event) {
+    void btnSetStatusMyBooksClicked(ActionEvent event) throws RemoteException {
 
+        if (searchFilter) {
+
+            if (listViewMyBooks.getSelectionModel().getSelectedItem() != null) {
+                int selectedBookIndex = listViewMyBooks.getSelectionModel().getSelectedIndex();
+                String content = listViewMyBooks.getSelectionModel().getSelectedItem();
+
+                // no book selected
+                if (selectedBookIndex == -1) {
+                    return;
+                }
+
+                int selectedStatusIndex = cmbNewStatus.getSelectionModel().getSelectedIndex();
+
+                // no status selected
+                if (selectedStatusIndex == -1) {
+                    return;
+                }
+
+                BookStatus bookStatus = cmbNewStatus.getSelectionModel().getSelectedItem();
+
+                Book selectedBook = null;
+
+                if (searchFilter) {
+                    for (Book book : temporaryFilterBooks) {
+                        if (String.format("%s, %s", book.getTitle(), book.getPublishedDate()).equals(content)) {
+                            selectedBook = book;
+                            break;
+                        }
+                    }
+                } else {
+                    selectedBook = (Book) userBookMap.keySet().toArray()[selectedBookIndex];
+                }
+                server.addUserBookPreference(username, selectedBook, bookStatus);
+
+                showAlertMessage(Alert.AlertType.INFORMATION, "Change book status", "Book status changed" +
+                                                                                    " successfully");
+                btnFetchBooksClicked(event);
+
+            }
+        }
     }
 
     @FXML

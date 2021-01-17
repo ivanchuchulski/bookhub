@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="853.0" y="0.0">api.interfaces.ServerObjectInterface</node>
+    <node x="864.0" y="601.0">dto.Items</node>
+    <node x="681.0" y="855.0">server.Server</node>
+    <node x="93.5" y="478.0">dto.BookTransfer.VolumeInfo.GoogleImages</node>
+    <node x="875.0" y="855.0">client.Client</node>
+    <node x="627.0" y="601.0">api.interfaces.BookStatus</node>
+    <node x="0.0" y="217.0">dto.BookTransfer.VolumeInfo</node>
+    <node x="436.0" y="260.0">implementations.BookImpl</node>
+    <node x="431.0" y="601.0">database.User</node>
+    <node x="0.0" y="601.0">database.DatabaseConnector</node>
+    <node x="535.0" y="0.0">api.interfaces.Book</node>
+    <node x="221.0" y="999.0">server.ServerController</node>
+    <node x="0.0" y="999.0">client.ClientController</node>
+    <node x="81.5" y="0.0">dto.BookTransfer</node>
+    <node x="0.0" y="855.0">google.books.GoogleBooksAPI</node>
+    <node x="420.0" y="855.0">api.interfaces.SearchCategory</node>
+    <node x="853.0" y="215.0">implementations.ServerObjectInterfaceImpl</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="implementations.BookImpl" target="api.interfaces.Book">
+      <point x="0.0" y="-138.5" />
+      <point x="0.0" y="105.0" />
+    </edge>
+    <edge source="dto.BookTransfer.VolumeInfo" target="dto.BookTransfer">
+      <point x="0.0" y="-105.5" />
+      <point x="0.0" y="83.5" />
+    </edge>
+    <edge source="implementations.ServerObjectInterfaceImpl" target="api.interfaces.ServerObjectInterface">
+      <point x="0.0" y="-94.0" />
+      <point x="0.0" y="82.5" />
+    </edge>
+    <edge source="dto.BookTransfer.VolumeInfo.GoogleImages" target="dto.BookTransfer.VolumeInfo">
+      <point x="0.0" y="-39.0" />
+      <point x="0.0" y="105.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.8" x="751.0912698412699" y="533.75" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Constructors</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>public</VISIBILITY>
+</Diagram>
+

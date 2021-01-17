@@ -5,11 +5,10 @@ import api.interfaces.BookStatus;
 import implementations.BookImpl;
 
 import java.rmi.RemoteException;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DatabaseConnector {
@@ -82,6 +81,73 @@ public class DatabaseConnector {
         return false;
     }
 
+    public List<User> fetchAllUsers() {
+
+        List<User> users = new ArrayList<>();
+
+        try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
+
+            System.out.println("Connecting to DB");
+            String sql = "SELECT * FROM users";
+
+            Statement stmt = connection.createStatement();
+
+            ResultSet resultSet = stmt.executeQuery(sql);
+
+            while (resultSet.next()) {
+
+                String targetUsername = resultSet.getString("username");
+                String targetPassword = resultSet.getString("password");
+
+                User user = new User(targetUsername, targetPassword);
+                users.add(user);
+            }
+
+            stmt.close();
+            resultSet.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+
+    public List<BookImpl> fetchAllBooks() {
+        List<BookImpl> books = new ArrayList<>();
+
+        try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
+
+            System.out.println("Connecting to DB");
+            String sql = "SELECT * FROM book";
+
+            Statement stmt = connection.createStatement();
+
+            ResultSet resultSet = stmt.executeQuery(sql);
+
+            while (resultSet.next()) {
+
+                String bookTitle = resultSet.getString("title");
+                String bookId = resultSet.getString("id");
+                String bookPublisher = resultSet.getString("publisher");
+                String bookPublishedDate = resultSet.getString("publishedDate");
+                String bookDescription = resultSet.getString("description");
+                String bookSmallThumbnailLink = resultSet.getString("smallThumbnailLink");
+
+                var book = new BookImpl(bookTitle, bookId, bookPublisher, bookPublishedDate,
+                        bookDescription, bookSmallThumbnailLink);
+
+                books.add(book);
+            }
+
+            stmt.close();
+            resultSet.close();
+
+        } catch (SQLException | RemoteException e) {
+            e.printStackTrace();
+        }
+        return books;
+    }
 
     private User searchByUsername(String username) {
         User user = null;

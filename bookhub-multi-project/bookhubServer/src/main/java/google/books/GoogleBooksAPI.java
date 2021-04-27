@@ -3,6 +3,7 @@ package google.books;
 import api.enums.SearchCategory;
 import com.google.gson.Gson;
 import dto.Items;
+import server.BookhubConfig;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -11,7 +12,7 @@ import java.net.http.HttpResponse;
 import java.util.concurrent.ExecutionException;
 
 public class GoogleBooksAPI {
-    private final static String API_KEY = "AIzaSyCokdzk2dP00RWq31eMgML7nt7KBagatUQ";
+    private final static String API_KEY = BookhubConfig.GOOGLE_BOOKS_API_KEY;
     private final static String URL = "https://www.googleapis.com/books/v1/volumes?q=";
 
     private final HttpClient client = HttpClient.newHttpClient();

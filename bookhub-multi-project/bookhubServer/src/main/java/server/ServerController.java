@@ -63,8 +63,8 @@ public class ServerController {
 
     @FXML
     void btnStopServerClicked(ActionEvent event) {
-
         Platform.exit();
+        System.exit(0);
     }
 
     @FXML

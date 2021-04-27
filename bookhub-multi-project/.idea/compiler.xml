@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.6" />
+    <bytecodeTargetLevel target="1.6">
+      <module name="bookhub-multi-project.bookhubAPI" target="15" />
+      <module name="bookhub-multi-project.bookhubAPI.main" target="15" />
+      <module name="bookhub-multi-project.bookhubAPI.test" target="15" />
+      <module name="bookhub-multi-project.bookhubClient" target="15" />
+      <module name="bookhub-multi-project.bookhubClient.main" target="15" />
+      <module name="bookhub-multi-project.bookhubClient.test" target="15" />
+      <module name="bookhub-multi-project.bookhubServer" target="15" />
+      <module name="bookhub-multi-project.bookhubServer.main" target="15" />
+      <module name="bookhub-multi-project.bookhubServer.test" target="15" />
+      <module name="bookhub-multi-project.main" target="15" />
+      <module name="bookhub-multi-project.test" target="15" />
+    </bytecodeTargetLevel>
   </component>
 </project>

@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module external.system.module.type="sourceSet" type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_15">
     <output-test url="file://$MODULE_DIR$/../../../bookhubClient/build/classes/java/test" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../../bookhubClient/src/test">
-      <sourceFolder url="file://$MODULE_DIR$/../../../bookhubClient/src/test/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/../../../bookhubClient/src/test/resources" type="java-test-resource" />
-    </content>
+    <content url="file://$MODULE_DIR$/../../../bookhubClient/src/test" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="bookhub-multi-project.bookhubClient.main" />
-    <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter-api:5.6.0" level="project" />
-    <orderEntry type="library" name="Gradle: org.junit.platform:junit-platform-commons:1.6.0" level="project" />
-    <orderEntry type="library" name="Gradle: org.apiguardian:apiguardian-api:1.1.0" level="project" />
-    <orderEntry type="library" name="Gradle: org.opentest4j:opentest4j:1.2.0" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.jupiter:junit-jupiter-engine:5.6.0" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.platform:junit-platform-engine:1.6.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-fxml:win:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:win:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:win:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:win:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.bookhub.api:bookhubAPI:1.0" level="project" />
   </component>
   <component name="TestModuleProperties" production-module="bookhub-multi-project.bookhubClient.main" />
 </module>

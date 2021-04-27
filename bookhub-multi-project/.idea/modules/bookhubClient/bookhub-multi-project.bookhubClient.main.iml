@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module external.system.module.type="sourceSet" type="JAVA_MODULE" version="4">
-  <component name="CheckStyle-IDEA-Module">
-    <option name="configuration">
-      <map />
-    </option>
-  </component>
-  <component name="NewModuleRootManager">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_15">
     <output url="file://$MODULE_DIR$/../../../bookhubClient/build/classes/java/main" />
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../../bookhubClient/src/main">
@@ -14,5 +9,13 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-fxml:win:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:win:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:win:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:win:14" level="project" />
+    <orderEntry type="library" name="Gradle: org.bookhub.api:bookhubAPI:1.0" level="project" />
   </component>
 </module>

@@ -3,19 +3,26 @@ package database;
 import api.interfaces.Book;
 import api.enums.BookStatus;
 import implementations.BookImpl;
+import server.BookhubConfig;
 
 import java.rmi.RemoteException;
-import java.sql.*;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class DatabaseConnector {
-    private static final String DB_URL = "jdbc:mysql://localhost/bookhub";
-
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
+    // private static final String DB_URL = "jdbc:mysql://localhost/bookhub";
+    // private static final String USER = "root";
+    // private static final String PASSWORD = "";
+    private static final String DB_URL = BookhubConfig.DB_URL;
+    private static final String USER = BookhubConfig.DB_USER;
+    private static final String PASSWORD = BookhubConfig.DB_PASSWORD;
 
     public static void main(String[] args) {
         DatabaseConnector connector = new DatabaseConnector();

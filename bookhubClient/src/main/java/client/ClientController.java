@@ -13,8 +13,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Text;
 
-import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -23,18 +23,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ClientController {
-    private final List<Book> temporaryFilterBooks = new ArrayList<>();
     private Registry registry;
     private ServerObjectInterface server;
-    private List<Book> searchBooksResultsList = new ArrayList<>();
+
+    private String username;
     private Map<Book, BookStatus> userBookMap = new HashMap<>();
     private List<Book> userBooksResultsList = new ArrayList<>();
-    private String username;
+
+    private List<Book> searchBooksResultsList = new ArrayList<>();
+
+    private final List<Book> temporaryFilterBooks = new ArrayList<>();
+
     private boolean searchFilter = false;
+
     @FXML
     private TabPane tabPaneMenu;
 
@@ -58,6 +64,9 @@ public class ClientController {
 
     @FXML
     private Button btnLogin;
+
+    @FXML
+    private Button btnLoginQuit;
 
     @FXML
     private Button btnRegister;
@@ -143,20 +152,21 @@ public class ClientController {
     @FXML
     private ComboBox<BookStatus> cmbNewStatus;
 
+    @FXML
+    private Text txtGreetUsername;
+
+    @FXML
+    private Text txtMyBooksGreetUsername;
 
     @FXML
     void initialize() {
-
-        setupGUI();
-        fillSearchCategory();
-        setupElementsListeners();
-
         try {
             registry = LocateRegistry.getRegistry(7777);
             server = (ServerObjectInterface) registry.lookup("interface");
 
-        } catch (AccessException e) {
-            e.printStackTrace();
+            initialSetupGUI();
+            fillSearchCategory();
+            setupElementsListeners();
         } catch (RemoteException | NotBoundException e) {
             e.printStackTrace();
 
@@ -171,81 +181,64 @@ public class ClientController {
         }
     }
 
-    private void setupElementsListeners() {
-        cmbStatusMyBooks.valueProperty().addListener(l -> btnSearchMyBooksClicked(new ActionEvent()));
-
-        tabMyBooks.selectedProperty().addListener(l -> btnFetchBooksClicked(new ActionEvent()));
-
-        cmbStatusMyBooks.setOnAction((event) -> updateUserBooksByPreferenceGUI());
-    }
-
-    private void setupGUI() {
-        fillComboBox(cmbBookStatus);
-        fillComboBox(cmbStatusMyBooks);
-        fillComboBox(cmbNewStatus);
-
-        disableTabs();
-
-        wrapTextArea(txaSearchPanel);
-        wrapTextArea(txaMyBooks);
-    }
-
-    private void fillSearchCategory() {
-        cmbCategory.getItems().addAll(SearchCategory.values());
-        cmbCategory.getSelectionModel().selectFirst();
-    }
 
     @FXML
     void btnLoginClicked(ActionEvent event) {
-        String username = txtUsername.getText();
-        String password = txtPassword.getText();
-
         try {
-            boolean loggedIn = server.login(username, password);
+            String username = txtUsername.getText();
+            String password = txtPassword.getText();
 
-            this.username = txtUsername.getText();
+            if (username.length() == 0 || password.length() == 0) {
+                showAlertMessage(Alert.AlertType.WARNING, "Login", "Fields are necessary!");
+                return;
+            }
 
-            txtUsername.setText("");
-            txtPassword.setText("");
+            if (server.login(username, password)) {
+                this.username = txtUsername.getText();
 
-            if (loggedIn) {
-                tabSearch.setDisable(false);
-                tabMyBooks.setDisable(false);
+                txtUsername.setText("");
+                txtPassword.setText("");
 
-                tabSearch.getContent().requestFocus();
+                ObservableList<Tab> tabs = tabPaneMenu.getTabs();
+                tabs.remove(tabLogin);
+                tabs.add(0, tabSearch);
+                tabs.add(1, tabMyBooks);
 
-                tabLogin.setDisable(true);
-                tabPaneMenu.getTabs().remove(0);
-
+                String usernameGreet = username + "!";
+                txtGreetUsername.setText(usernameGreet);
+                txtMyBooksGreetUsername.setText(usernameGreet);
 
                 showAlertMessage(Alert.AlertType.INFORMATION, "Login", "Login successful!");
             } else {
                 showAlertMessage(Alert.AlertType.WARNING, "Login", "Incorrect credentials");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            showAlertMessage(Alert.AlertType.INFORMATION, "Login", "Login failed, please try again");
         }
     }
 
     @FXML
     void btnRegisterClicked(ActionEvent event) {
-        String username = txtUsername.getText();
-        String password = txtPassword.getText();
-
         try {
-            boolean success = server.register(username, password);
+            String username = txtUsername.getText();
+            String password = txtPassword.getText();
 
-            txtUsername.setText("");
-            txtPassword.setText("");
+            if (username.length() == 0 || password.length() == 0) {
+                showAlertMessage(Alert.AlertType.WARNING, "Register", "Fields for registration are necessary!");
+                return;
+            }
 
-            if (success) {
+            if (server.register(username, password)) {
+                txtUsername.setText("");
+                txtPassword.setText("");
                 showAlertMessage(Alert.AlertType.CONFIRMATION, "Registration", "Registration successful!");
             } else {
                 showAlertMessage(Alert.AlertType.INFORMATION, "Registration", "Registration failed!");
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            showAlertMessage(Alert.AlertType.INFORMATION, "Registration", "Registration failed, please try again");
         }
     }
 
@@ -255,42 +248,37 @@ public class ClientController {
             String inputText = textSearch.getText();
             SearchCategory selectedCategory = cmbCategory.getSelectionModel().getSelectedItem();
 
-            listViewSearchPanel.getItems().clear();
-
             searchBooksResultsList = server.getBookByType(selectedCategory, inputText);
 
             // clear the list
-            listViewSearchPanel.getItems().clear();
-            txaSearchPanel.clear();
-            imgViewSearchPane.setImage(null);
+            clearSearchResults();
 
-            if (searchBooksResultsList != null) {
-                txaSearchPanel.setText("select a book to view it's description");
-
-                List<String> bookInfos = searchBooksResultsList.stream()
-                        .map(book -> {
-                            try {
-                                return book.printInfo();
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                            }
-                            return null;
-                        })
-                        .collect(Collectors.toList());
-
-                listViewSearchPanel.getItems().clear();
-                listViewSearchPanel.getItems().addAll(bookInfos);
-
-            } else {
+            if (searchBooksResultsList == null) {
                 listViewSearchPanel.setItems(FXCollections.observableArrayList(List.of("nothing found")));
+                return;
             }
+
+            txaSearchPanel.setText("select a book to view it's description");
+
+            List<String> bookInfos = searchBooksResultsList.stream()
+                                                           .map(book -> {
+                                                               try {
+                                                                   return book.printInfo();
+                                                               } catch (RemoteException e) {
+                                                                   e.printStackTrace();
+                                                               }
+                                                               return null;
+                                                           })
+                                                           .collect(Collectors.toList());
+
+            listViewSearchPanel.setItems(FXCollections.observableList(bookInfos));
         } catch (Exception exception) {
             exception.printStackTrace();
         }
     }
 
     @FXML
-    void listViewSearchPanelOnClick(MouseEvent event) throws RemoteException {
+    void listViewSearchPanelOnClick(MouseEvent event) {
         if (listViewSearchPanel.getSelectionModel().getSelectedItem() != null) {
             int index = listViewSearchPanel.getSelectionModel().getSelectedIndex();
 
@@ -302,14 +290,15 @@ public class ClientController {
 
             Book book = searchBooksResultsList.get(index);
 
-            txaSearchPanel.clear();
-            txaSearchPanel.setText(book.getDescription());
-
             try {
+                txaSearchPanel.clear();
+                txaSearchPanel.setText(book.getDescription());
+
                 Image javafxImage = new Image(book.getSmallThumbnailLink());
                 imgViewSearchPane.setImage(javafxImage);
             } catch (Exception e) {
                 e.printStackTrace();
+                txaSearchPanel.setText("unable to display book description");
             }
         }
     }
@@ -317,6 +306,11 @@ public class ClientController {
     @FXML
     void btnAddBookClicked(ActionEvent event) {
         int index = listViewSearchPanel.getSelectionModel().getSelectedIndex();
+
+        if (searchBooksResultsList.isEmpty()) {
+            showAlertMessage(Alert.AlertType.INFORMATION, "Book preference", "No book selected to add");
+            return;
+        }
 
         Book selectedBook = searchBooksResultsList.get(index);
 
@@ -327,10 +321,10 @@ public class ClientController {
 
             if (success) {
                 showAlertMessage(Alert.AlertType.INFORMATION, "Add Book to preferences", "Successfully " +
-                                                                                         "added book to preferences");
+                        "added book to preferences");
             } else {
                 showAlertMessage(Alert.AlertType.ERROR, "Add Book to preferences", "Failed to add " +
-                                                                                   "add book to preferences");
+                        "add book to preferences");
             }
 
         } catch (RemoteException e) {
@@ -340,7 +334,24 @@ public class ClientController {
 
     @FXML
     void btnQuitClicked(ActionEvent event) {
-        Platform.exit();
+        logoutDialog();
+    }
+
+    @FXML
+    void btnLoginQuitClicked(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Quit confirmation");
+        alert.setHeaderText("Quitting Bookhub");
+        alert.setContentText("Are you sure you want to exit?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        result.ifPresent(buttonType -> {
+            if (buttonType == ButtonType.OK) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
     }
 
     @FXML
@@ -352,7 +363,7 @@ public class ClientController {
 
 
         ObservableList<String> myBooksObservableList = FXCollections.observableList(userBooksResultsList
-                .stream().map(e -> {
+                                                                                            .stream().map(e -> {
                     try {
                         return String.format("%s, %s", e.getTitle(), e.getPublishedDate());
                     } catch (RemoteException remoteException) {
@@ -393,7 +404,7 @@ public class ClientController {
             filter = e -> {
                 try {
                     return e.getTitle().toLowerCase().contains(title) && userBookMap.get(e)
-                            .equals(preference);
+                                                                                    .equals(preference);
                 } catch (RemoteException remoteException) {
                     remoteException.printStackTrace();
                 }
@@ -415,19 +426,6 @@ public class ClientController {
 
         var observableList = getObservableList(books);
         listViewMyBooks.setItems(observableList);
-    }
-
-    private List<Book> filterUserBooks(Predicate<Book> p) {
-        List<Book> books = new ArrayList<>();
-
-        userBooksResultsList.stream()
-                .filter(p)
-                .forEach(e -> {
-                    books.add(e);
-                    temporaryFilterBooks.add(e);
-                });
-
-        return books;
     }
 
     @FXML
@@ -473,7 +471,6 @@ public class ClientController {
 
     @FXML
     void btnFetchBooksClicked(ActionEvent event) {
-
         try {
 
             clearTemporaryBooksList();
@@ -484,16 +481,16 @@ public class ClientController {
 
             ObservableList<String> myBooksObservableList =
                     FXCollections.observableList(userBooksResultsList.stream()
-                            .map(e -> {
-                                try {
-                                    return String
-                                            .format("%s, %s", e.getTitle(), e
-                                                    .getPublishedDate());
-                                } catch (RemoteException remoteException) {
-                                    remoteException.printStackTrace();
-                                }
-                                return null;
-                            }).collect(Collectors.toList()));
+                                                                     .map(e -> {
+                                                                         try {
+                                                                             return String
+                                                                                     .format("%s, %s", e.getTitle(), e
+                                                                                             .getPublishedDate());
+                                                                         } catch (RemoteException remoteException) {
+                                                                             remoteException.printStackTrace();
+                                                                         }
+                                                                         return null;
+                                                                     }).collect(Collectors.toList()));
 
             clearMyBooksGUI();
 
@@ -505,9 +502,7 @@ public class ClientController {
 
     @FXML
     void btnSetStatusMyBooksClicked(ActionEvent event) throws RemoteException {
-
         if (searchFilter) {
-
             if (listViewMyBooks.getSelectionModel().getSelectedItem() != null) {
                 int selectedBookIndex = listViewMyBooks.getSelectionModel().getSelectedIndex();
                 String content = listViewMyBooks.getSelectionModel().getSelectedItem();
@@ -541,9 +536,9 @@ public class ClientController {
                 server.addUserBookPreference(username, selectedBook, bookStatus);
 
                 showAlertMessage(Alert.AlertType.INFORMATION, "Change book status", "Book status changed" +
-                                                                                    " successfully");
-                btnFetchBooksClicked(event);
+                        " successfully");
 
+                btnFetchBooksClicked(event);
             }
         }
     }
@@ -582,7 +577,33 @@ public class ClientController {
 
     @FXML
     void btnQuitMyBooksClicked(ActionEvent event) {
-        Platform.exit();
+        logoutDialog();
+    }
+
+    private void initialSetupGUI() {
+        fillComboBox(cmbBookStatus);
+        fillComboBox(cmbStatusMyBooks);
+        fillComboBox(cmbNewStatus);
+
+        ObservableList<Tab> tabs = tabPaneMenu.getTabs();
+        tabs.remove(tabSearch);
+        tabs.remove(tabMyBooks);
+
+        wrapTextArea(txaSearchPanel);
+        wrapTextArea(txaMyBooks);
+    }
+
+    private void fillSearchCategory() {
+        cmbCategory.getItems().addAll(SearchCategory.values());
+        cmbCategory.getSelectionModel().selectFirst();
+    }
+
+    private void setupElementsListeners() {
+        cmbStatusMyBooks.valueProperty().addListener(l -> btnSearchMyBooksClicked(new ActionEvent()));
+
+        tabMyBooks.selectedProperty().addListener(l -> btnFetchBooksClicked(new ActionEvent()));
+
+        cmbStatusMyBooks.setOnAction((event) -> updateUserBooksByPreferenceGUI());
     }
 
 
@@ -605,11 +626,28 @@ public class ClientController {
         }).collect(Collectors.toList()));
     }
 
+    private List<Book> filterUserBooks(Predicate<Book> p) {
+        List<Book> books = new ArrayList<>();
+
+        userBooksResultsList.stream()
+                            .filter(p)
+                            .forEach(e -> {
+                                books.add(e);
+                                temporaryFilterBooks.add(e);
+                            });
+
+        return books;
+    }
+
     private void clearMyBooksGUI() {
+        txtSearchTitleMyBooks.clear();
+
         cmbStatusMyBooks.getSelectionModel().select(-1);
-        txaMyBooks.clear();
-        imgViewMyBooks.setImage(null);
         listViewMyBooks.getSelectionModel().select(-1);
+
+        txaMyBooks.clear();
+
+        imgViewMyBooks.setImage(null);
     }
 
     private void clearTemporaryBooksList() {
@@ -620,11 +658,6 @@ public class ClientController {
     private void fillComboBox(ComboBox<BookStatus> comboBox) {
         comboBox.getItems().addAll(BookStatus.values());
         comboBox.getSelectionModel().select(-1);
-    }
-
-    private void disableTabs() {
-        tabSearch.setDisable(true);
-        tabMyBooks.setDisable(true);
     }
 
     private void updateUserBooksByPreferenceGUI() {
@@ -647,13 +680,13 @@ public class ClientController {
 
         if (searchFilter) {
             booksForCategory = temporaryFilterBooks.stream()
-                    .filter(e -> userBookMap.get(e).equals(preference))
-                    .collect(Collectors.toList());
+                                                   .filter(e -> userBookMap.get(e).equals(preference))
+                                                   .collect(Collectors.toList());
 
         } else {
             booksForCategory = userBooksResultsList.stream()
-                    .filter(e -> userBookMap.get(e).equals(preference))
-                    .collect(Collectors.toList());
+                                                   .filter(e -> userBookMap.get(e).equals(preference))
+                                                   .collect(Collectors.toList());
         }
 
         ObservableList<String> observableList = getObservableList(booksForCategory);
@@ -668,5 +701,40 @@ public class ClientController {
         scrollPane.setContent(textArea);
 
         textArea.setWrapText(true);
+    }
+
+    private void clearSearchResults() {
+        listViewSearchPanel.getItems().clear();
+        txaSearchPanel.clear();
+        imgViewSearchPane.setImage(null);
+    }
+
+    private void logoutDialog() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Logout confirmation");
+        alert.setHeaderText("Logging out from Bookhub");
+        alert.setContentText("Are you sure you want to logout?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        result.ifPresent(buttonType -> {
+            if (buttonType == ButtonType.OK) {
+                ObservableList<Tab> tabs = tabPaneMenu.getTabs();
+                tabs.remove(tabSearch);
+                tabs.remove(tabMyBooks);
+                tabs.add(tabLogin);
+
+                username = "";
+                txtGreetUsername.setText("");
+                txtMyBooksGreetUsername.setText("");
+
+                userBookMap.clear();
+                userBooksResultsList.clear();
+
+                textSearch.clear();
+                clearSearchResults();
+                clearMyBooksGUI();
+            }
+        });
     }
 }

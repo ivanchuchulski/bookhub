@@ -17,18 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 public class DatabaseConnector {
-    // private static final String DB_URL = "jdbc:mysql://localhost/bookhub";
-    // private static final String USER = "root";
-    // private static final String PASSWORD = "";
     private static final String DB_URL = BookhubConfig.DB_URL;
     private static final String USER = BookhubConfig.DB_USER;
     private static final String PASSWORD = BookhubConfig.DB_PASSWORD;
-
-    public static void main(String[] args) {
-        DatabaseConnector connector = new DatabaseConnector();
-
-        connector.getBooksForUser("test");
-    }
 
     public boolean loginUserInDB(String username, String password) {
         try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
@@ -329,6 +320,10 @@ public class DatabaseConnector {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean adminLogin(String username, String password) {
+        return true;
     }
 
 }

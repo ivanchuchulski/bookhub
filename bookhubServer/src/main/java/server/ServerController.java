@@ -172,6 +172,8 @@ public class ServerController {
         result.ifPresent(buttonType -> {
             if (buttonType == ButtonType.OK) {
                 txtAdminNameGreet.setText("");
+                txaUsers.clear();
+                txaBooks.clear();
 
                 ObservableList<Tab> tabs = tabPane.getTabs();
                 tabs.remove(tabAdminPanel);

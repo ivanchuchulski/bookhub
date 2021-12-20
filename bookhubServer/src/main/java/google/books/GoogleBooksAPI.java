@@ -2,9 +2,12 @@ package google.books;
 
 import api.enums.SearchCategory;
 import com.google.gson.Gson;
+import dto.BookTransfer;
 import dto.Items;
 import server.BookhubConfig;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -19,51 +22,48 @@ public class GoogleBooksAPI {
     private final Gson gson = new Gson();
 
     // to de deleted, for testing
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
+    public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
         GoogleBooksAPI googleBooksAPI = new GoogleBooksAPI();
+
         String title = "Thor";
+        Items items = googleBooksAPI.getBookFromGoogleAPIByType(SearchCategory.TITLE, title);
 
-        Items items = googleBooksAPI.getItemsFromGoogleAPI(title);
-
-        System.out.println(items);
-
-    }
-
-    public Items getBookFromGoogleAPIByType(SearchCategory type, String argument) throws ExecutionException,
-            InterruptedException {
-        switch (type) {
-            case TITLE -> {
-                String titleQueryParameter = replaceSpacesWithURLEncodingSymbol(argument);
-                return getItemsFromGoogleAPI(titleQueryParameter);
-            }
-            case AUTHOR -> {
-                String authorQueryParameter = "inauthor:" + replaceSpacesWithURLEncodingSymbol(argument);
-                return getItemsFromGoogleAPI(authorQueryParameter);
-            }
-
-            case PUBLISHER -> {
-                String publisherQueryParameter = "inpublisher:" + replaceSpacesWithURLEncodingSymbol(argument);
-                return getItemsFromGoogleAPI(publisherQueryParameter);
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + type);
+        for (BookTransfer item : items.getItems()) {
+            System.out.println(item);
         }
     }
 
-    public Items getItemsFromGoogleAPI(String argument) throws ExecutionException, InterruptedException {
-        String json = sendRequestAndGetResponseBody(argument);
+    public Items getBookFromGoogleAPIByType(SearchCategory type, String argument) throws ExecutionException,
+            InterruptedException, IOException {
+        String searchParameter =
+                switch (type) {
+                    case TITLE -> replaceSpacesWithURLEncodingSymbol(argument);
 
+                    case AUTHOR -> "inauthor:" + replaceSpacesWithURLEncodingSymbol(argument);
+
+                    case PUBLISHER -> "inpublisher:" + replaceSpacesWithURLEncodingSymbol(argument);
+                };
+
+        URI requestURI = URI.create(buildUrl(searchParameter));
+
+        String json = sendRequestAndGetResponseBody(requestURI);
         return gson.fromJson(json, Items.class);
     }
 
-    private String sendRequestAndGetResponseBody(String argument) throws ExecutionException, InterruptedException {
+    private String sendRequestAndGetResponseBody(URI requestURI) throws ExecutionException, InterruptedException,
+            IOException {
         HttpRequest request = HttpRequest.newBuilder()
-                                         .uri(URI.create(buildUrl(argument)))
+                                         .uri(requestURI)
                                          .GET()
                                          .build();
 
-        HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                                              .get();
+        // maybe this should be sync?
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
+//        int statusCode = response.statusCode();
+//        if (statusCode != HttpURLConnection.HTTP_OK) {
+//            // ...
+//        }
         return response.body();
     }
 

@@ -10,6 +10,7 @@ import dto.BookTransfer;
 import dto.Items;
 import google.books.GoogleBooksAPI;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
                 return result;
             }
 
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException | ExecutionException | IOException e) {
             e.printStackTrace();
         }
 

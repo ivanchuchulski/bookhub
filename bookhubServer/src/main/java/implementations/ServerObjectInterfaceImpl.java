@@ -8,6 +8,7 @@ import api.interfaces.ServerObjectInterface;
 import database.DatabaseConnector;
 import dto.BookTransfer;
 import dto.Items;
+import exceptions.BookQueryException;
 import google.books.GoogleBooksAPI;
 
 import java.io.IOException;
@@ -19,12 +20,17 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements ServerObjectInterface {
+    private static final String NOT_FOUND_IMAGE_URL = "https://drudesk.com/sites/default/files/styles" +
+            "/blog_page_header_1088x520" +
+            "/public/2018-02/404-error-page-not-found.jpg?itok=YW-iShwf";
 
-    private final GoogleBooksAPI googleBooksAPI = new GoogleBooksAPI();
-    private final DatabaseConnector databaseConnector = new DatabaseConnector();
+    private final GoogleBooksAPI googleBooksAPI;
+    private final DatabaseConnector databaseConnector;
 
     public ServerObjectInterfaceImpl() throws RemoteException {
         super();
+        googleBooksAPI = new GoogleBooksAPI();
+        databaseConnector = new DatabaseConnector();
     }
 
     @Override
@@ -34,7 +40,7 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
 
     @Override
     public boolean login(String username, String password) throws RemoteException {
-        return databaseConnector.loginUserInDB(username, password);
+        return databaseConnector.isUserRegistered(username, password);
     }
 
     @Override
@@ -47,20 +53,17 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
                 for (BookTransfer item : booksByTitle.getItems()) {
                     BookTransfer.VolumeInfo volumeInfo = item.getVolumeInfo();
 
-                    String notFoundImage = "https://drudesk.com/sites/default/files/styles/blog_page_header_1088x520" +
-                                           "/public/2018-02/404-error-page-not-found.jpg?itok=YW-iShwf";
-
                     String imageLink = volumeInfo.getImageLinks() == null ?
-                            notFoundImage : volumeInfo.getImageLinks().getSmallThumbnail();
+                            NOT_FOUND_IMAGE_URL : volumeInfo.getImageLinks().getSmallThumbnail();
 
-                    result.add(new BookImpl(volumeInfo.getTitle(), item.getId(), volumeInfo.getAuthors(), volumeInfo.getPublisher(),
-                            volumeInfo.getPublishedDate(), volumeInfo.getDescription(),
-                            imageLink));
+                    result.add(new BookImpl(volumeInfo.getTitle(), item.getId(), volumeInfo.getAuthors(),
+                                            volumeInfo.getPublisher(), volumeInfo.getPublishedDate(),
+                                            volumeInfo.getDescription(), imageLink));
                 }
                 return result;
             }
 
-        } catch (InterruptedException | ExecutionException | IOException e) {
+        } catch (InterruptedException | ExecutionException | IOException | BookQueryException e) {
             e.printStackTrace();
         }
 

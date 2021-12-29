@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import dto.BookTransfer;
 import dto.Items;
 import exceptions.BookQueryException;
-import server.BookhubConfig;
+import server.BookhubServerConfig;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -18,7 +18,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutionException;
 
 public class GoogleBooksAPI {
-    private final static String API_KEY = BookhubConfig.GOOGLE_BOOKS_API_KEY;
+    private final static String API_KEY = BookhubServerConfig.GOOGLE_BOOKS_API_KEY;
     private final static String URL = "https://www.googleapis.com/books/v1/volumes?q=";
 
     private final HttpClient client;

@@ -9,23 +9,43 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.net.URL;
+import java.rmi.AlreadyBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 public class Server extends Application {
-    public static void main(String[] args) {
-        launch(args);
-    }
+    private static final int SERVER_REGISTRY_PORT = BookhubServerConfig.REGISTRY_PORT;
+
+    private static final String SERVER_INTERFACE_REGISTRY_NAME = "interface";
+    private static final String ROOT_SCENE_FXML_FILENAME = "server.fxml";
 
     @Override
     public void start(Stage stage) throws Exception {
-        ServerObjectInterface server = new ServerObjectInterfaceImpl(); // create Interface instance
-        Registry registry = LocateRegistry.createRegistry(7777); //  create registry
-        registry.bind("interface", server); // bind registry to object
+        initRMIRegistry();
 
-        System.out.println("Object registered successfully.");
+        initRootScene(stage);
+    }
 
-        Parent root = FXMLLoader.load(getClass().getResource("server.fxml"));
+    private void initRMIRegistry() throws RemoteException, AlreadyBoundException {
+        ServerObjectInterface server = new ServerObjectInterfaceImpl();
+        Registry registry = LocateRegistry.createRegistry(SERVER_REGISTRY_PORT);
+
+        registry.bind(SERVER_INTERFACE_REGISTRY_NAME, server);
+
+        System.out.println("registered server object successfully");
+    }
+
+    private void initRootScene(Stage stage) throws IOException {
+        URL rootSceneURL = Server.class.getResource(ROOT_SCENE_FXML_FILENAME);
+
+        if (rootSceneURL == null) {
+            throw new AssertionError("could not load main scene fxml");
+        }
+
+        Parent root = FXMLLoader.load(rootSceneURL);
 
         Scene scene = new Scene(root);
         stage.setResizable(false);
@@ -37,5 +57,10 @@ public class Server extends Application {
         });
         stage.show();
 
+        System.out.println("started main scene");
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }

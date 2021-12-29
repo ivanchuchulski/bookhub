@@ -36,19 +36,30 @@ application {
 }
 
 buildConfig {
-    className("BookhubConfig")   // forces the class name. Defaults to 'BuildConfig'
+    className("BookhubServerConfig")   // forces the class name. Defaults to 'BuildConfig'
     packageName("server")  // forces the package. Defaults to '${project.group}'
 
     useJavaOutput() // forces the outputType to 'java'
 
-    def GOOGLE_BOOKS_API_KEY = findProperty('GOOGLE_BOOKS_API_KEY')
-    def DB_URL = findProperty('DB_URL')
-    def DB_USER = findProperty('DB_USER')
-    def DB_PASSWORD = findProperty('DB_PASSWORD')
+    // RMI parameters
+    def REGISTRY_PORT = property('REGISTRY_PORT')
+    def SERVER_INTERFACE_REGISTRY_NAME = property('SERVER_INTERFACE_REGISTRY_NAME')
 
-    buildConfigField('String', 'GOOGLE_BOOKS_API_KEY', "\"${GOOGLE_BOOKS_API_KEY}\"")
+    // database credentials
+    def DB_URL = property('DB_URL')
+    def DB_USER = property('DB_USER')
+    def DB_PASSWORD = property('DB_PASSWORD')
+
+    // external systems API_KEY
+    def GOOGLE_BOOKS_API_KEY = property('GOOGLE_BOOKS_API_KEY')
+
+    buildConfigField('int', 'REGISTRY_PORT', "${REGISTRY_PORT}")
+    buildConfigField('String', 'SERVER_INTERFACE_REGISTRY_NAME', "\"${SERVER_INTERFACE_REGISTRY_NAME}\"")
+
     buildConfigField('String', 'DB_URL', "\"${DB_URL}\"")
     buildConfigField('String', 'DB_USER', "\"${DB_USER}\"")
     buildConfigField('String', 'DB_PASSWORD', "\"${DB_PASSWORD}\"")
+
+    buildConfigField('String', 'GOOGLE_BOOKS_API_KEY', "\"${GOOGLE_BOOKS_API_KEY}\"")
 }
 

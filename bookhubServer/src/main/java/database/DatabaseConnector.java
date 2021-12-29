@@ -3,7 +3,7 @@ package database;
 import api.interfaces.Book;
 import api.enums.BookStatus;
 import implementations.BookImpl;
-import server.BookhubConfig;
+import server.BookhubServerConfig;
 
 import java.rmi.RemoteException;
 import java.sql.DriverManager;
@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 public class DatabaseConnector {
-    private static final String DB_URL = BookhubConfig.DB_URL;
-    private static final String USER = BookhubConfig.DB_USER;
-    private static final String PASSWORD = BookhubConfig.DB_PASSWORD;
+    private static final String DB_URL = BookhubServerConfig.DB_URL;
+    private static final String USER = BookhubServerConfig.DB_USER;
+    private static final String PASSWORD = BookhubServerConfig.DB_PASSWORD;
 
     public boolean isUserRegistered(String username, String password) {
         try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {

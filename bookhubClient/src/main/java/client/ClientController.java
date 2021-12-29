@@ -28,6 +28,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ClientController {
+    private static final int SERVER_REGISTRY_PORT = BookhubClientConfig.REGISTRY_PORT;
+    private static final String SERVER_INTERFACE_REGISTRY_NAME = BookhubClientConfig.SERVER_INTERFACE_REGISTRY_NAME;
+
     private Registry registry;
     private ServerObjectInterface server;
 
@@ -161,8 +164,8 @@ public class ClientController {
     @FXML
     void initialize() {
         try {
-            registry = LocateRegistry.getRegistry(7777);
-            server = (ServerObjectInterface) registry.lookup("interface");
+            registry = LocateRegistry.getRegistry(SERVER_REGISTRY_PORT);
+            server = (ServerObjectInterface) registry.lookup(SERVER_INTERFACE_REGISTRY_NAME);
 
             initialSetupGUI();
             fillSearchCategory();

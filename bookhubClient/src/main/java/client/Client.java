@@ -7,15 +7,20 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.net.URL;
+
 public class Client extends Application {
-    public static void main(String[] args) {
-        launch(args);
-    }
+    private static final String ROOT_SCENE_FXML_FILENAME = "client.fxml";
 
     @Override
     public void start(Stage stage) throws Exception {
+        URL rootSceneURL = Client.class.getResource(ROOT_SCENE_FXML_FILENAME);
 
-        Parent root = FXMLLoader.load(getClass().getResource("client.fxml"));
+        if (rootSceneURL == null) {
+            throw new RuntimeException("could not load main scene fxml");
+        }
+
+        Parent root = FXMLLoader.load(rootSceneURL);
         Scene scene = new Scene(root);
 
         stage.setResizable(false);
@@ -26,5 +31,9 @@ public class Client extends Application {
             System.exit(0);
         });
         stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }

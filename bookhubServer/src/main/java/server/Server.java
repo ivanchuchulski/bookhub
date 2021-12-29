@@ -18,8 +18,8 @@ import java.rmi.registry.Registry;
 
 public class Server extends Application {
     private static final int SERVER_REGISTRY_PORT = BookhubServerConfig.REGISTRY_PORT;
+    private static final String SERVER_INTERFACE_REGISTRY_NAME = BookhubServerConfig.SERVER_INTERFACE_REGISTRY_NAME;
 
-    private static final String SERVER_INTERFACE_REGISTRY_NAME = "interface";
     private static final String ROOT_SCENE_FXML_FILENAME = "server.fxml";
 
     @Override
@@ -42,12 +42,12 @@ public class Server extends Application {
         URL rootSceneURL = Server.class.getResource(ROOT_SCENE_FXML_FILENAME);
 
         if (rootSceneURL == null) {
-            throw new AssertionError("could not load main scene fxml");
+            throw new RuntimeException("could not load main scene fxml");
         }
 
         Parent root = FXMLLoader.load(rootSceneURL);
-
         Scene scene = new Scene(root);
+
         stage.setResizable(false);
         stage.setTitle("Server control panel");
         stage.setScene(scene);

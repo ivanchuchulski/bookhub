@@ -34,7 +34,7 @@ public class ClientController {
     private Registry registry;
     private ServerObjectInterface server;
 
-    private String username;
+    private String loggedInUsername;
     private Map<Book, BookStatus> userBookMap = new HashMap<>();
     private List<Book> userBooksResultsList = new ArrayList<>();
 
@@ -197,7 +197,7 @@ public class ClientController {
             }
 
             if (server.login(username, password)) {
-                this.username = txtUsername.getText();
+                this.loggedInUsername = txtUsername.getText();
 
                 txtUsername.setText("");
                 txtPassword.setText("");
@@ -256,7 +256,7 @@ public class ClientController {
             // clear the list
             clearSearchResults();
 
-            if (searchBooksResultsList == null) {
+            if (searchBooksResultsList.isEmpty()) {
                 listViewSearchPanel.setItems(FXCollections.observableArrayList(List.of("nothing found")));
                 return;
             }
@@ -320,7 +320,7 @@ public class ClientController {
         BookStatus bookStatus = cmbBookStatus.getSelectionModel().getSelectedItem();
 
         try {
-            boolean success = server.addUserBookPreference(username, selectedBook, bookStatus);
+            boolean success = server.addUserBookPreference(loggedInUsername, selectedBook, bookStatus);
 
             if (success) {
                 showAlertMessage(Alert.AlertType.INFORMATION, "Add Book to preferences", "Successfully " +
@@ -478,7 +478,7 @@ public class ClientController {
 
             clearTemporaryBooksList();
 
-            userBookMap = server.getBooksForUser(username);
+            userBookMap = server.getBooksForUser(loggedInUsername);
 
             userBooksResultsList = new ArrayList<>(userBookMap.keySet());
 
@@ -505,44 +505,37 @@ public class ClientController {
 
     @FXML
     void btnSetStatusMyBooksClicked(ActionEvent event) throws RemoteException {
-        if (searchFilter) {
-            if (listViewMyBooks.getSelectionModel().getSelectedItem() != null) {
-                int selectedBookIndex = listViewMyBooks.getSelectionModel().getSelectedIndex();
-                String content = listViewMyBooks.getSelectionModel().getSelectedItem();
+        if (searchFilter && listViewMyBooks.getSelectionModel().getSelectedItem() != null) {
+            int selectedBookIndex = listViewMyBooks.getSelectionModel().getSelectedIndex();
+            int selectedStatusIndex = cmbNewStatus.getSelectionModel().getSelectedIndex();
 
-                // no book selected
-                if (selectedBookIndex == -1) {
-                    return;
-                }
-
-                int selectedStatusIndex = cmbNewStatus.getSelectionModel().getSelectedIndex();
-
-                // no status selected
-                if (selectedStatusIndex == -1) {
-                    return;
-                }
-
-                BookStatus bookStatus = cmbNewStatus.getSelectionModel().getSelectedItem();
-
-                Book selectedBook = null;
-
-                if (searchFilter) {
-                    for (Book book : temporaryFilterBooks) {
-                        if (String.format("%s, %s", book.getTitle(), book.getPublishedDate()).equals(content)) {
-                            selectedBook = book;
-                            break;
-                        }
-                    }
-                } else {
-                    selectedBook = (Book) userBookMap.keySet().toArray()[selectedBookIndex];
-                }
-                server.addUserBookPreference(username, selectedBook, bookStatus);
-
-                showAlertMessage(Alert.AlertType.INFORMATION, "Change book status", "Book status changed" +
-                        " successfully");
-
-                btnFetchBooksClicked(event);
+            if (selectedBookIndex == -1 || selectedStatusIndex == -1) {
+                return;
             }
+
+            String content = listViewMyBooks.getSelectionModel().getSelectedItem();
+            BookStatus bookStatus = cmbNewStatus.getSelectionModel().getSelectedItem();
+
+            Book selectedBook = null;
+
+            if (searchFilter) {
+                for (Book book : temporaryFilterBooks) {
+                    if (String.format("%s, %s", book.getTitle(), book.getPublishedDate()).equals(content)) {
+                        selectedBook = book;
+                        break;
+                    }
+                }
+            } else {
+                selectedBook = (Book) userBookMap.keySet().toArray()[selectedBookIndex];
+            }
+            server.addUserBookPreference(loggedInUsername, selectedBook, bookStatus);
+
+            showAlertMessage(Alert.AlertType.INFORMATION, "Change book status", "Book status changed" +
+                    " successfully");
+
+            btnFetchBooksClicked(event);
+        } else {
+            showAlertMessage(Alert.AlertType.INFORMATION, "Change book status", "No book selected");
         }
     }
 
@@ -569,7 +562,7 @@ public class ClientController {
                 } else {
                     selectedBook = (Book) userBookMap.keySet().toArray()[index];
                 }
-                server.removeBook(username, selectedBook.getId());
+                server.removeBook(loggedInUsername, selectedBook.getId());
 
                 btnFetchBooksClicked(event);
             }
@@ -727,7 +720,7 @@ public class ClientController {
                 tabs.remove(tabMyBooks);
                 tabs.add(tabLogin);
 
-                username = "";
+                loggedInUsername = "";
                 txtGreetUsername.setText("");
                 txtMyBooksGreetUsername.setText("");
 

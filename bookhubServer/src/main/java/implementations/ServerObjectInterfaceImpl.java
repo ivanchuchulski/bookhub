@@ -1,9 +1,8 @@
 package implementations;
 
-
-import api.interfaces.Book;
 import api.enums.BookStatus;
 import api.enums.SearchCategory;
+import api.interfaces.Book;
 import api.interfaces.ServerObjectInterface;
 import database.DatabaseConnector;
 import dto.BookTransfer;
@@ -15,9 +14,9 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements ServerObjectInterface {
     private static final String NOT_FOUND_IMAGE_URL = "https://drudesk.com/sites/default/files/styles" +
@@ -35,6 +34,9 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
 
     @Override
     public boolean register(String username, String password) throws RemoteException {
+        if (databaseConnector.isUserRegistered(username, password)) {
+            return false;
+        }
         return databaseConnector.registerUserInDB(username, password);
     }
 
@@ -63,11 +65,11 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
                 return result;
             }
 
-        } catch (InterruptedException | ExecutionException | IOException | BookQueryException e) {
+        } catch (IOException | BookQueryException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
@@ -82,6 +84,6 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
 
     @Override
     public void removeBook(String username, String bookId) throws RemoteException {
-        databaseConnector.removeBook(username, bookId);
+        databaseConnector.removeBookPreference(username, bookId);
     }
 }

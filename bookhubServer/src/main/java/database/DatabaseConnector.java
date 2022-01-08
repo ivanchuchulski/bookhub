@@ -5,13 +5,16 @@ import api.enums.BookStatus;
 import implementations.BookImpl;
 import server.BookhubServerConfig;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,23 +24,29 @@ public class DatabaseConnector {
     private static final String USER = BookhubServerConfig.DB_USER;
     private static final String PASSWORD = BookhubServerConfig.DB_PASSWORD;
 
-    public boolean isUserRegistered(String username, String password) {
-        try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
-            String checkUserRegisteredQuery = "SELECT * FROM users WHERE username = ? AND password = ?";
+    private Connection connection;
 
-            PreparedStatement prep = connection.prepareStatement(checkUserRegisteredQuery);
+    public DatabaseConnector() {
+        try {
+            connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void disconnect() throws SQLException {
+        connection.close();
+    }
+
+    public boolean isUserRegistered(String username, String password) {
+        String checkUserRegisteredQuery = "SELECT * FROM users WHERE username = ? AND password = ?";
+        try (PreparedStatement prep = connection.prepareStatement(checkUserRegisteredQuery)) {
             prep.setString(1, username);
             prep.setString(2, password);
 
-            ResultSet result = prep.executeQuery();
-
-            if (result.next()) {
-                result.close();
-                prep.close();
-                return true;
+            try (ResultSet result = prep.executeQuery()) {
+                return result.next();
             }
-
-            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -45,100 +54,60 @@ public class DatabaseConnector {
     }
 
     public boolean registerUserInDB(String username, String password) {
-        try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
-            String checkUserExistQuery = "SELECT * FROM users WHERE username = ?";
-
-            PreparedStatement prep = connection.prepareStatement(checkUserExistQuery);
-            prep.setString(1, username);
-
-            ResultSet result = prep.executeQuery();
-
-            if (result.next()) {
-                result.close();
-                prep.close();
-
-                return false;
-            }
-
-            String insertUserQuery = "INSERT INTO users (username, password) VALUES (?, ?)";
-
-            prep = connection.prepareStatement(insertUserQuery);
-
+        String insertUserQuery = "INSERT INTO users (username, password) VALUES (?, ?)";
+        try (PreparedStatement prep = connection.prepareStatement(insertUserQuery)) {
             prep.setString(1, username);
             prep.setString(2, password);
 
-            prep.execute();
-            prep.close();
-            result.close();
+            prep.executeUpdate();
 
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     public List<User> fetchAllUsers() {
-
         List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM users";
+        try (Statement stmt = connection.createStatement()) {
 
-        try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
+            try (ResultSet resultSet = stmt.executeQuery(sql)) {
+                while (resultSet.next()) {
+                    String targetUsername = resultSet.getString("username");
+                    String targetPassword = resultSet.getString("password");
 
-            System.out.println("Connecting to DB");
-            String sql = "SELECT * FROM users";
-
-            Statement stmt = connection.createStatement();
-
-            ResultSet resultSet = stmt.executeQuery(sql);
-
-            while (resultSet.next()) {
-
-                String targetUsername = resultSet.getString("username");
-                String targetPassword = resultSet.getString("password");
-
-                User user = new User(targetUsername, targetPassword);
-                users.add(user);
+                    users.add(new User(targetUsername, targetPassword));
+                }
             }
-
-            stmt.close();
-            resultSet.close();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return users;
     }
 
-
     public List<BookImpl> fetchAllBooks() {
         List<BookImpl> books = new ArrayList<>();
+        String sql = "SELECT * FROM book";
+        try (Statement stmt = connection.createStatement()) {
 
-        try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
+            try (ResultSet resultSet = stmt.executeQuery(sql)) {
+                while (resultSet.next()) {
+                    String bookTitle = resultSet.getString("title");
+                    String bookId = resultSet.getString("id");
+                    String bookPublisher = resultSet.getString("publisher");
+                    String bookPublishedDate = resultSet.getString("publishedDate");
+                    String bookDescription = resultSet.getString("description");
+                    String bookSmallThumbnailLink = resultSet.getString("smallThumbnailLink");
 
-            System.out.println("Connecting to DB");
-            String sql = "SELECT * FROM book";
+                    var book = new BookImpl(bookTitle, bookId, bookPublisher, bookPublishedDate,
+                                            bookDescription, bookSmallThumbnailLink);
 
-            Statement stmt = connection.createStatement();
-
-            ResultSet resultSet = stmt.executeQuery(sql);
-
-            while (resultSet.next()) {
-
-                String bookTitle = resultSet.getString("title");
-                String bookId = resultSet.getString("id");
-                String bookPublisher = resultSet.getString("publisher");
-                String bookPublishedDate = resultSet.getString("publishedDate");
-                String bookDescription = resultSet.getString("description");
-                String bookSmallThumbnailLink = resultSet.getString("smallThumbnailLink");
-
-                var book = new BookImpl(bookTitle, bookId, bookPublisher, bookPublishedDate,
-                                        bookDescription, bookSmallThumbnailLink);
-
-                books.add(book);
+                    books.add(book);
+                }
             }
-
-            stmt.close();
-            resultSet.close();
 
         } catch (SQLException | RemoteException e) {
             e.printStackTrace();
@@ -146,143 +115,50 @@ public class DatabaseConnector {
         return books;
     }
 
-    private User searchByUsername(String username) {
-        User user = null;
-
-        try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
-
-            System.out.println("Connecting to DB");
-            String sql = "SELECT * FROM users WHERE username = ?";
-
-
-            PreparedStatement prep = connection.prepareStatement(sql);
-            prep.setString(1, username);
-
-            ResultSet resultSet = prep.executeQuery();
-
-            while (resultSet.next()) {
-
-                String targetUsername = resultSet.getString("username");
-                String targetPassword = resultSet.getString("password");
-
-                //result = String.format("%s %s", targetUsername, targetPassword);
-                user = new User(targetUsername, targetPassword);
-            }
-
-            prep.close();
-            resultSet.close();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return user;
-    }
-
-    private boolean addUserToDB(String username, String password) {
-        try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
-
-            System.out.println("Connecting to DB");
-            String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
-
-            PreparedStatement prep = connection.prepareStatement(sql);
-            prep.setString(1, username);
-            prep.setString(2, password);
-
-            boolean success = prep.execute();
-
-            prep.close();
-
-            return success;
-
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    private void addBookToDB(Book book) {
-        try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
-            System.out.println("Connecting to DB");
-
-            // when trying to insert the same book the primary key is the same, so ON DUBLICATE ... is not needed
-            String sql = "INSERT INTO book (title, id, publisher, publishedDate, description, smallThumbnailLink) " +
-                    "VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE title = ?";
-
-
-            PreparedStatement prep = connection.prepareStatement(sql);
-            prep.setString(1, book.getTitle());
-            prep.setString(2, book.getId());
-            prep.setString(3, book.getPublisher());
-            prep.setString(4, book.getPublishedDate());
-            prep.setString(5, book.getDescription());
-            prep.setString(6, book.getSmallThumbnailLink());
-
-            prep.setString(7, book.getTitle());
-
-            prep.execute();
-
-            prep.close();
-        } catch (SQLException | RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
     public Map<Book, BookStatus> getBooksForUser(String username) {
         Map<Book, BookStatus> userBooks = new HashMap<>();
 
-        try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
-            System.out.println("Connecting to DB");
-
-            String sql = "SELECT book.title, book.id, book.publisher, book.publishedDate, book.description, " +
-                    "book.smallThumbnailLink, preferences.preferenceType FROM " +
-                    "book JOIN preferences ON book.id = preferences.bookId WHERE username = ?";
-
-
-            PreparedStatement prep = connection.prepareStatement(sql);
+        String sql = "SELECT book.title, book.id, book.publisher, book.publishedDate, book.description, " +
+                "book.smallThumbnailLink, preferences.preferenceType FROM " +
+                "book JOIN preferences ON book.id = preferences.bookId WHERE username = ?";
+        try (PreparedStatement prep = connection.prepareStatement(sql)) {
 
             prep.setString(1, username);
 
-            ResultSet resultSet = prep.executeQuery();
+            try (ResultSet resultSet = prep.executeQuery()) {
 
-            while (resultSet.next()) {
-                String bookTitle = resultSet.getString("title");
-                String bookId = resultSet.getString("id");
-                String bookPublisher = resultSet.getString("publisher");
-                String bookPublishedDate = resultSet.getString("publishedDate");
-                String bookDescription = resultSet.getString("description");
-                String bookSmallThumbnailLink = resultSet.getString("smallThumbnailLink");
+                while (resultSet.next()) {
+                    String bookTitle = resultSet.getString("title");
+                    String bookId = resultSet.getString("id");
+                    String bookPublisher = resultSet.getString("publisher");
+                    String bookPublishedDate = resultSet.getString("publishedDate");
+                    String bookDescription = resultSet.getString("description");
+                    String bookSmallThumbnailLink = resultSet.getString("smallThumbnailLink");
 
-                String bookPreferenceString = String.join("_",
-                                                          resultSet.getString("preferenceType").toUpperCase()
-                                                                   .split("\\s+"));
+                    String bookPreferenceString = String.join("_",
+                                                              resultSet.getString("preferenceType").toUpperCase()
+                                                                       .split("\\s+"));
 
-                var book = new BookImpl(bookTitle, bookId, bookPublisher, bookPublishedDate,
-                                        bookDescription, bookSmallThumbnailLink);
+                    var book = new BookImpl(bookTitle, bookId, bookPublisher, bookPublishedDate,
+                                            bookDescription, bookSmallThumbnailLink);
 
-                userBooks.put(book, BookStatus.valueOf(bookPreferenceString));
+                    userBooks.put(book, BookStatus.valueOf(bookPreferenceString));
+                }
             }
-
-            prep.close();
-            resultSet.close();
-
             return userBooks;
         } catch (SQLException | RemoteException e) {
             e.printStackTrace();
-            return null;
+            return Collections.emptyMap();
         }
     }
 
     public boolean addUserPreferenceBookToDB(String username, Book book, BookStatus selectedCategory) {
-        try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
-            System.out.println("Connecting to DB");
+        addBookToDB(book);
 
-            addBookToDB(book);
+        String sql = "INSERT INTO preferences (username, bookId, preferenceType) VALUES (?, ?, ?)" +
+                "ON DUPLICATE KEY UPDATE preferenceType = ?";
 
-            String sql = "INSERT INTO preferences (username, bookId, preferenceType) VALUES (?, ?, ?)" +
-                    "ON DUPLICATE KEY UPDATE preferenceType = ?";
-
-            PreparedStatement prep = connection.prepareStatement(sql);
+        try (PreparedStatement prep = connection.prepareStatement(sql)) {
             prep.setString(1, username);
             prep.setString(2, book.getId());
 
@@ -295,8 +171,6 @@ public class DatabaseConnector {
 
             prep.execute();
 
-            prep.close();
-
             return true;
         } catch (SQLException | RemoteException e) {
             e.printStackTrace();
@@ -304,18 +178,14 @@ public class DatabaseConnector {
         }
     }
 
-    public void removeBook(String username, String bookId) {
-        try (var connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
-            System.out.println("Connecting to DB");
+    public void removeBookPreference(String username, String bookId) {
+        String sql = "DELETE FROM preferences WHERE username = ? AND bookId = ?";
 
-            String sql = "DELETE FROM preferences WHERE username = ? AND bookId = ?";
-
-            PreparedStatement prep = connection.prepareStatement(sql);
+        try (PreparedStatement prep = connection.prepareStatement(sql)) {
             prep.setString(1, username);
             prep.setString(2, bookId);
 
             prep.execute();
-            prep.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -323,6 +193,26 @@ public class DatabaseConnector {
 
     public boolean adminLogin(String username, String password) {
         return true;
+    }
+
+    private void addBookToDB(Book book) {
+        // when trying to insert the same book the primary key is the same, so ON DUPLICATE ... is not needed
+        String sql = "INSERT INTO book (title, id, publisher, publishedDate, description, smallThumbnailLink) " +
+                "VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE title = ?";
+        try (PreparedStatement prep = connection.prepareStatement(sql)) {
+            prep.setString(1, book.getTitle());
+            prep.setString(2, book.getId());
+            prep.setString(3, book.getPublisher());
+            prep.setString(4, book.getPublishedDate());
+            prep.setString(5, book.getDescription());
+            prep.setString(6, book.getSmallThumbnailLink());
+
+            prep.setString(7, book.getTitle());
+
+            prep.execute();
+        } catch (SQLException | RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
 }

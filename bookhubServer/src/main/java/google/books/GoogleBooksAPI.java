@@ -8,6 +8,7 @@ import exceptions.BookQueryException;
 import server.BookhubServerConfig;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -15,7 +16,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.ExecutionException;
 
 public class GoogleBooksAPI {
     private final static String API_KEY = BookhubServerConfig.GOOGLE_BOOKS_API_KEY;
@@ -30,7 +30,7 @@ public class GoogleBooksAPI {
     }
 
     // to de deleted, for testing
-    public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
+    public static void main(String[] args) {
         try {
             GoogleBooksAPI googleBooksAPI = new GoogleBooksAPI();
             String title = "Thor";
@@ -45,8 +45,7 @@ public class GoogleBooksAPI {
         }
     }
 
-    public Items getBookFromGoogleAPIByType(SearchCategory type, String argument) throws ExecutionException,
-            InterruptedException, IOException, BookQueryException {
+    public Items getBookFromGoogleAPIByType(SearchCategory type, String argument) throws BookQueryException {
         String searchParameter =
                 switch (type) {
                     case TITLE -> replaceSpacesWithURLEncodingSymbol(argument);

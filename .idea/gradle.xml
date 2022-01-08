@@ -11,6 +11,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/bookhubAPI" />
+            <option value="$PROJECT_DIR$/bookhubClient" />
+            <option value="$PROJECT_DIR$/bookhubServer" />
           </set>
         </option>
       </GradleProjectSettings>

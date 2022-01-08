@@ -1,2 +1,5 @@
 rootProject.name = 'bookhub-multi-project'
 
+include 'bookhubAPI'
+include 'bookhubServer'
+include 'bookhubClient'

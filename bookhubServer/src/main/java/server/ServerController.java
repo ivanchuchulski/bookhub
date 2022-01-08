@@ -121,6 +121,10 @@ public class ServerController {
             ObservableList<Tab> tabs = tabPane.getTabs();
             tabs.remove(tabLogin);
             tabs.add(tabAdminPanel);
+
+            showAlertMessage(Alert.AlertType.INFORMATION, "Admin Login", "Login successful!");
+        } else {
+            showAlertMessage(Alert.AlertType.WARNING, "Admin Login", "Incorrect credentials");
         }
     }
 

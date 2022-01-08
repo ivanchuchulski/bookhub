@@ -5,6 +5,7 @@ import api.interfaces.Book;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
+import java.util.Objects;
 
 // this object is used for sending to the client
 public class BookImpl extends UnicastRemoteObject implements Book {
@@ -87,6 +88,28 @@ public class BookImpl extends UnicastRemoteObject implements Book {
     @Override
     public String toString() {
         return String.format("Title: [%s] Publisher: [%s] Published: [%s]%n", title, publisher, publishedDate);
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        BookImpl book = (BookImpl) o;
+        return Objects.equals(id, book.id) && Objects.equals(title, book.title) && Arrays.equals(authors,
+                                                                                                 book.authors) && Objects.equals(publisher, book.publisher) && Objects.equals(publishedDate, book.publishedDate) && Objects.equals(description, book.description) && Objects.equals(smallThumbnailLink, book.smallThumbnailLink);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(super.hashCode(), id, title, publisher, publishedDate, description, smallThumbnailLink);
+        result = 31 * result + Arrays.hashCode(authors);
+        return result;
     }
 }

@@ -8,7 +8,6 @@ import exceptions.BookQueryException;
 import server.BookhubServerConfig;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.http.HttpClient;

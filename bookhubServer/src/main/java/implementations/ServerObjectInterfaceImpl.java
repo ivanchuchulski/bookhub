@@ -37,6 +37,7 @@ public class ServerObjectInterfaceImpl extends UnicastRemoteObject implements Se
         if (databaseConnector.isUserRegistered(username, password)) {
             return false;
         }
+
         return databaseConnector.registerUserInDB(username, password);
     }
 

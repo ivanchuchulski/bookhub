@@ -5,7 +5,6 @@ import api.enums.BookStatus;
 import implementations.BookImpl;
 import server.BookhubServerConfig;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -162,9 +161,7 @@ public class DatabaseConnector {
             prep.setString(1, username);
             prep.setString(2, book.getId());
 
-            System.out.println(username);
-            System.out.println(book.getId());
-            System.out.println(selectedCategory.getText());
+            printPreference(username, book, selectedCategory);
 
             prep.setString(3, selectedCategory.getText());
             prep.setString(4, selectedCategory.getText());
@@ -192,7 +189,22 @@ public class DatabaseConnector {
     }
 
     public boolean adminLogin(String username, String password) {
-        return true;
+        String sql = "SELECT password FROM admin WHERE username = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, username);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    String dbPass = resultSet.getString("password");
+                    return password.equals(dbPass);
+                }
+
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private void addBookToDB(Book book) {
@@ -214,5 +226,12 @@ public class DatabaseConnector {
             e.printStackTrace();
         }
     }
+
+    private void printPreference(String username, Book book, BookStatus selectedCategory) throws RemoteException {
+        System.out.println(username);
+        System.out.println(book.getId());
+        System.out.println(selectedCategory.getText());
+    }
+
 
 }

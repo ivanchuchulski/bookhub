@@ -34,7 +34,7 @@ javafx {
 }
 
 application {
-    mainClass = 'server.Server'
+    mainClass = 'server.Main'
 }
 
 buildConfig {

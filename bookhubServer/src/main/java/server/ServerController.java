@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ServerController {
-    private DatabaseConnector connector;
+    private DatabaseConnector databaseConnector;
 
     @FXML
     private ResourceBundle resources;
@@ -86,8 +86,8 @@ public class ServerController {
     private Text txtAdminNameGreet;
 
 
-    public void setConnector(DatabaseConnector connector) {
-        this.connector = connector;
+    public void setDatabaseConnector(DatabaseConnector databaseConnector) {
+        this.databaseConnector = databaseConnector;
     }
 
     @FXML
@@ -117,7 +117,7 @@ public class ServerController {
             return;
         }
 
-        if (connector.adminLogin(usernameAdmin, passwordAdmin)) {
+        if (databaseConnector.adminLogin(usernameAdmin, passwordAdmin)) {
             txtAdminUsername.setText("");
             txtAdminPassword.setText("");
 
@@ -144,6 +144,7 @@ public class ServerController {
 
         result.ifPresent(buttonType -> {
             if (buttonType == ButtonType.OK) {
+                databaseConnector.disconnect();
                 Platform.exit();
                 System.exit(0);
             }
@@ -154,7 +155,7 @@ public class ServerController {
     void btnDisplayBooksClicked(ActionEvent event) {
         txaBooks.clear();
 
-        List<BookImpl> books = connector.fetchAllBooks();
+        List<BookImpl> books = databaseConnector.fetchAllBooks();
 
         books.stream().map(BookImpl::toString).forEach(txaBooks::appendText);
     }
@@ -164,7 +165,7 @@ public class ServerController {
 
         txaUsers.clear();
 
-        List<User> users = connector.fetchAllUsers();
+        List<User> users = databaseConnector.fetchAllUsers();
 
         users.stream().map(User::toString).forEach(txaUsers::appendText);
     }
@@ -205,6 +206,7 @@ public class ServerController {
                 // maybe disconnect all clients somehow
 
                 // exit the javafx platform and java runtime
+                databaseConnector.disconnect();
                 Platform.exit();
                 System.exit(0);
             }

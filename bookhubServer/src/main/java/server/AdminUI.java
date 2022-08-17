@@ -26,7 +26,7 @@ public class AdminUI extends Application {
     }
 
     private void initRootScene(Stage stage) throws IOException {
-        URL rootSceneURL = Server.class.getResource(ROOT_SCENE_FXML_FILENAME);
+        URL rootSceneURL = Main.class.getResource(ROOT_SCENE_FXML_FILENAME);
 
         if (rootSceneURL == null) {
             throw new RuntimeException("could not load main scene fxml");
@@ -37,7 +37,7 @@ public class AdminUI extends Application {
 
         // init controller dependencies
         ServerController serverController = rootSceneLoader.getController();
-        serverController.setConnector(databaseConnector);
+        serverController.setDatabaseConnector(databaseConnector);
 
         Scene scene = new Scene(root);
 
@@ -45,11 +45,11 @@ public class AdminUI extends Application {
         stage.setTitle("Server control panel");
         stage.setScene(scene);
         stage.setOnCloseRequest(event -> {
+            databaseConnector.disconnect();
             Platform.exit();
             System.exit(0);
         });
-        stage.show();
 
-        System.out.println("started main scene");
+        stage.show();
     }
 }

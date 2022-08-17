@@ -33,8 +33,12 @@ public class DatabaseConnector {
         }
     }
 
-    public void disconnect() throws SQLException {
-        connection.close();
+    public void disconnect() {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException("error closing database connection", e);
+        }
     }
 
     public boolean isUserRegistered(String username, String password) {

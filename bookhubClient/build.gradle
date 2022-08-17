@@ -27,7 +27,7 @@ javafx {
     modules = ['javafx.controls', 'javafx.fxml',  'javafx.graphics']
 }
 
-mainClassName = 'client.Client'
+mainClassName = 'client.Main'
 
 // use this to clear the build directory
 task clearBuild(type: Delete) {

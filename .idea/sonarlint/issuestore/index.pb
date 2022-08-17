@@ -50,8 +50,6 @@ I
 .bookhubServer/src/main/java/database/User.java,c\9\c9a4d69e8ff12e37add73f28feb190669a1a7782
 M
 bookhubServer/settings.gradle,9\0\9058f97638bf7027cc1ea37097b74dcac279397a
-b
-2bookhubServer/src/test/java/server/ServerTest.java,1\a\1a0701e8501baf01004173d2634d6f3adfe503b0
 l
 <bookhubServer/src/main/java/google/books/GoogleBooksAPI.java,9\2\92c37cd8666428dfbd551acd38ec9222db06ae30
 S

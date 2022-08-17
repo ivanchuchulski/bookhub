@@ -18,5 +18,4 @@
     <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:win:14" level="project" />
     <orderEntry type="library" name="Gradle: org.bookhub.api:bookhubAPI:1.0" level="project" />
   </component>
-  <component name="TestModuleProperties" production-module="bookhub-multi-project.bookhubServer.main" />
 </module>

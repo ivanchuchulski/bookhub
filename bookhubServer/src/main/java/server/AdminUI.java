@@ -1,5 +1,6 @@
 package server;
 
+import database.DatabaseConnector;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +14,12 @@ import java.net.URL;
 public class AdminUI extends Application {
     private static final String ROOT_SCENE_FXML_FILENAME = "server.fxml";
 
+    private static DatabaseConnector databaseConnector;
+
+    public static void setDatabaseConnector(DatabaseConnector databaseConnector) {
+        AdminUI.databaseConnector = databaseConnector;
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         initRootScene(primaryStage);
@@ -25,7 +32,13 @@ public class AdminUI extends Application {
             throw new RuntimeException("could not load main scene fxml");
         }
 
-        Parent root = FXMLLoader.load(rootSceneURL);
+        FXMLLoader rootSceneLoader = new FXMLLoader(rootSceneURL);
+        Parent root = rootSceneLoader.load();
+
+        // init controller dependencies
+        ServerController serverController = rootSceneLoader.getController();
+        serverController.setConnector(databaseConnector);
+
         Scene scene = new Scene(root);
 
         stage.setResizable(false);

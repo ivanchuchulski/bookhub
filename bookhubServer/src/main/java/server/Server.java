@@ -1,17 +1,10 @@
 package server;
 
 import api.interfaces.ServerObjectInterface;
+import database.DatabaseConnector;
 import implementations.ServerObjectInterfaceImpl;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.net.URL;
-import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -21,7 +14,7 @@ public class Server {
     private static final int SERVER_REGISTRY_PORT = BookhubServerConfig.REGISTRY_PORT;
     private static final String SERVER_INTERFACE_REGISTRY_NAME = BookhubServerConfig.SERVER_INTERFACE_REGISTRY_NAME;
 
-    public Server(boolean startAdmin) {
+    public Server(boolean startAdminGUI) {
         try {
             ServerObjectInterface server = new ServerObjectInterfaceImpl();
             Registry registry = LocateRegistry.createRegistry(SERVER_REGISTRY_PORT);
@@ -30,7 +23,9 @@ public class Server {
 
             System.out.println("registered server object successfully");
 
-            if (startAdmin) {
+            if (startAdminGUI) {
+                DatabaseConnector databaseConnector = new DatabaseConnector();
+                AdminUI.setDatabaseConnector(databaseConnector);
                 Application.launch(AdminUI.class);
             }
 

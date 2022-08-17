@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ServerController {
-    private DatabaseConnector connector = new DatabaseConnector();
+    private DatabaseConnector connector;
 
     @FXML
     private ResourceBundle resources;
@@ -84,6 +84,11 @@ public class ServerController {
 
     @FXML
     private Text txtAdminNameGreet;
+
+
+    public void setConnector(DatabaseConnector connector) {
+        this.connector = connector;
+    }
 
     @FXML
     void initialize() {

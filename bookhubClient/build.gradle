@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     // this is for the API project
-    implementation 'org.bookhub.api:bookhubAPI:1.0'
+    implementation project(':bookhubAPI')
 }
 
 test {

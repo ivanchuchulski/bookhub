@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class ClientController {
+public class AppController {
     private static final int SERVER_REGISTRY_PORT = BookhubClientConfig.REGISTRY_PORT;
     private static final String SERVER_INTERFACE_REGISTRY_NAME = BookhubClientConfig.SERVER_INTERFACE_REGISTRY_NAME;
 

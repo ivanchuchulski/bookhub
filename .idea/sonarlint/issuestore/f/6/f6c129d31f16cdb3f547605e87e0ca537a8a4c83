@@ -1,0 +1,21 @@
+
+i
+java:S1192î"MDefine a constant instead of duplicating this literal "Registration" 3 times.(ó»«¬ıÿÿÿÿ
+c
+java:S1192ó"GDefine a constant instead of duplicating this literal "%s, %s" 6 times.(ÆÖ³ÿÿÿÿÿ
+b
+java:S1192Ã"FDefine a constant instead of duplicating this literal "Login" 4 times.(Û¹¬–úÿÿÿÿ
+f
+java:S2259Ğ"JA "NullPointerException" could be thrown; "selectedBook" is nullable here.(†ÈøÛüÿÿÿÿ
+f
+java:S2259µ"JA "NullPointerException" could be thrown; "selectedBook" is nullable here.(¶Îñ˜ıÿÿÿÿ
+_
+java:S2583‰"CChange this condition so that it does not always evaluate to "true"(ÇÊ•ñûÿÿÿÿ
+m
+java:S1450""WRemove the "registry" field and declare it as a local variable in the relevant methods.(Ãôì–
+T	java:S106¥"9Replace this use of System.out or System.err by a logger.(÷»Âªüÿÿÿÿ
+T	java:S106¬"9Replace this use of System.out or System.err by a logger.(û¼î±üÿÿÿÿ
+n
+java:S3776û"RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(¡ĞèÉşÿÿÿÿ
+J
+java:S1611Ú"3Remove the parentheses around the "event" parameter(¼šùŒ

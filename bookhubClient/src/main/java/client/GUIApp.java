@@ -9,12 +9,12 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 
-public class Client extends Application {
+public class GUIApp extends Application {
     private static final String ROOT_SCENE_FXML_FILENAME = "client.fxml";
 
     @Override
     public void start(Stage stage) throws Exception {
-        URL rootSceneURL = Client.class.getResource(ROOT_SCENE_FXML_FILENAME);
+        URL rootSceneURL = GUIApp.class.getResource(ROOT_SCENE_FXML_FILENAME);
 
         if (rootSceneURL == null) {
             throw new RuntimeException("could not load main scene fxml");
